@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Збір на дрони для ЗСУ — Євген Мартинюк × БФ «Алярм»</title>
+<meta name="description" content="Пластун Євген збирає на автоматизацію БпЛА, пікапи для ССО та модернізацію дронів. Збір у рамках відбору на КВТ 30 разом із БФ «Алярм».">
+<meta property="og:title" content="Збір на дрони для ЗСУ — долучайся!">
+<meta property="og:description" content="Кожна гривня стає залізом для 80 ОДШБр, ССО та 59 ОШБр. Донать або репость.">
+<meta property="og:image" content="https://evge14n.github.io/zbir-kvt30/hero.png">
+<meta property="og:url" content="https://evge14n.github.io/zbir-kvt30/">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0e11; --panel:#14171c; --line:#23272e;
+  --txt:#eef0f2; --mut:#9aa3ad;
+  --flame:#f2a33c; --flame2:#e0701f; --plast:#8e2538;
+  --ez:cubic-bezier(.22,1,.36,1);
+  --ez-clip:cubic-bezier(.77,0,.175,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font:400 17px/1.65 Inter,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Unbounded,sans-serif;line-height:1.15}
+a{color:inherit}
+::selection{background:var(--flame);color:#1a1205}
+:focus-visible{outline:2px solid var(--flame);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+
+.hero{position:relative;min-height:92svh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:-12% 0;background:url(hero.png) center/cover no-repeat;
+  will-change:transform;animation:settle 2.4s var(--ez) backwards}
+@keyframes settle{from{transform:scale(1.07)}to{transform:scale(1)}}
+.hero::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(12,14,17,.25) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
+.hero .wrap{position:relative;z-index:1;padding-bottom:64px;width:100%}
+.hero [data-enter]{animation:enter .85s var(--ez) backwards}
+.hero [data-enter="2"]{animation-delay:.12s}
+.hero [data-enter="3"]{animation-delay:.24s}
+.hero [data-enter="4"]{animation-delay:.38s}
+@keyframes enter{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+.kicker{display:inline-block;background:var(--plast);padding:7px 14px;border-radius:999px;
+  font:600 12px/1 Inter;letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,5.6vw,58px);font-weight:900;max-width:17ch}
+.hero p.sub{margin:16px 0 28px;color:#d8dde2;max-width:54ch;font-size:clamp(16px,2vw,19px)}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:14px;padding:16px 26px;
+  font:600 16px Inter;text-decoration:none;border:1px solid var(--line);cursor:pointer;
+  transition:transform .22s var(--ez),box-shadow .22s var(--ez),border-color .22s var(--ez)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--flame),var(--flame2));color:#1a1205;border:none}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(240,160,60,.25)}
+.btn.ghost{background:rgba(20,23,28,.7);backdrop-filter:blur(6px)}
+.btn.ghost:hover{border-color:var(--flame)}
+.btn[aria-disabled="true"]{opacity:.55;cursor:default;pointer-events:none}
+
+section{padding:74px 0}
+.eyebrow{color:var(--flame);font:600 13px Inter;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:18px}
+.lead{color:var(--mut);max-width:62ch}
+
+.rv{opacity:0;transform:translateY(18px);filter:blur(4px);
+  transition:opacity .7s var(--ez) var(--d,0s),transform .7s var(--ez) var(--d,0s),filter .7s var(--ez) var(--d,0s)}
+.rv.in{opacity:1;transform:none;filter:blur(0)}
+
+.progress-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:30px 28px;margin-top:34px}
+.amounts{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.amounts .got{font:700 clamp(28px,4.4vw,44px) Unbounded;color:var(--flame);font-variant-numeric:tabular-nums}
+.amounts .goal{color:var(--mut);font-size:15px}
+.bar{height:16px;background:#0a0c0e;border:1px solid var(--line);border-radius:999px;margin:18px 0 10px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;width:100%;
+  background:linear-gradient(90deg,var(--flame2),var(--flame));
+  transform:scaleX(0);transform-origin:left;will-change:transform;
+  transition:transform 1.4s var(--ez)}
+.bar-note{display:flex;justify-content:space-between;color:var(--mut);font-size:14px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:34px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;
+  transition:transform .25s var(--ez),border-color .25s var(--ez),box-shadow .25s var(--ez)}
+.card:hover{transform:translateY(-4px);border-color:#3a4048;box-shadow:0 16px 36px rgba(0,0,0,.35)}
+.card .n{font:700 26px Unbounded;color:var(--flame);margin-bottom:8px}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{color:var(--mut);font-size:15px}
+
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+.about .ph{aspect-ratio:3/4;border-radius:22px;border:1px solid var(--line);
+  background:var(--panel) url(about.png) center/cover no-repeat;
+  display:flex;align-items:flex-end;justify-content:center;
+  color:#cfd5da;font-size:13px;padding:14px;text-align:center;
+  clip-path:inset(0 0 100% 0 round 22px);transition:clip-path 1s var(--ez-clip) .15s}
+.about .ph span{background:rgba(12,14,17,.65);backdrop-filter:blur(4px);padding:6px 12px;border-radius:10px}
+.about .ph.in{clip-path:inset(0 0 0 0 round 22px)}
+.about ul{list-style:none;margin-top:18px;display:grid;gap:10px}
+.about li{padding-left:26px;position:relative;color:#cfd5da}
+.about li::before{content:"";position:absolute;left:0;top:9px;width:10px;height:10px;border-radius:3px;
+  background:linear-gradient(135deg,var(--flame),var(--flame2))}
+
+.help .grid .card strong{display:block;margin-bottom:6px}
+.qr-box{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:26px}
+.qr-box img{width:148px;height:148px;border-radius:14px;background:#fff;padding:8px}
+.qr-hidden{display:none}
+
+footer{border-top:1px solid var(--line);padding:36px 0 46px;color:var(--mut);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+
+@media (max-width:760px){
+  .about{grid-template-columns:1fr}
+  section{padding:56px 0}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .hero-bg{transform:none!important}
+  .rv{opacity:1;transform:none;filter:none}
+  .about .ph{clip-path:none}
+  .bar i{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="kicker" data-enter="1">Пласт × БФ «Алярм» · відбір на КВТ 30</span>
+    <h1 data-enter="2">Збираю на дрони, поки готуюсь до табору</h1>
+    <p class="sub" data-enter="3">Я Євген, пластун-розвідувач. Перше завдання мого відбору на Крайовий Вишкільний Табір — не про мене: разом із фондом «Алярм» збираємо на техніку для тих, хто тримає небо й землю.</p>
+    <div class="cta-row" data-enter="4">
+      <a class="btn primary" id="donateBtn" href="#" aria-disabled="true">Банка скоро відкриється</a>
+      <button class="btn ghost" id="shareBtn">Поділитися збором</button>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">Прогрес</p>
+    <h2 class="rv" style="--d:.06s">Моя ціль</h2>
+    <div class="progress-card rv" style="--d:.12s" id="progressCard">
+      <div class="amounts">
+        <span class="got" id="raised">0 грн</span>
+        <span class="goal">з <b id="goal"></b> · <span id="pct">0%</span></span>
+      </div>
+      <div class="bar"><i id="fill"></i></div>
+      <div class="bar-note"><span>оновлюю щодня</span><span id="donors"></span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">Куди йдуть гроші</p>
+    <h2 class="rv" style="--d:.06s">Спільна ціль таборів — 3 000 000 грн</h2>
+    <p class="lead rv" style="--d:.12s">Мій збір — частина великого збору крайових пластових таборів разом із БФ «Алярм»: команда пластунів, що з 2022 року закриває запити Сил Оборони. Все до копійки йде на:</p>
+    <div class="grid">
+      <div class="card rv" style="--d:.1s"><div class="n">01</div><h3>Автоматизація БпЛА</h3><p>Системи автоматизації польотів для 80-ї окремої десантно-штурмової бригади.</p></div>
+      <div class="card rv" style="--d:.2s"><div class="n">02</div><h3>Пікапи для ССО</h3><p>Машини для підрозділу Сил спеціальних операцій — мобільність, що рятує життя.</p></div>
+      <div class="card rv" style="--d:.3s"><div class="n">03</div><h3>100 дронів — 59 ОШБр</h3><p>1 млн грн майстерні Drone Up на модернізацію сотні дронів для «Хижаків висот».</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap about">
+    <div>
+      <p class="eyebrow rv">Хто збирає</p>
+      <h2 class="rv" style="--d:.06s">Чому мені можна довіряти</h2>
+      <p class="lead rv" style="--d:.12s">Мені 17, я в Пласті — найбільшій скаутській організації України. Зараз проходжу відбір на Крайовий Вишкільний Табір, і цей збір — його перше завдання: справа важливіша за будь-який табір.</p>
+      <ul>
+        <li class="rv" style="--d:.18s">Пластун-розвідувач, готуюся до третьої проби</li>
+        <li class="rv" style="--d:.26s">Був інтендантом курінного табору — годував табір 11 днів</li>
+        <li class="rv" style="--d:.34s">Заступник по програмі заходу «Останній бій» 2026</li>
+        <li class="rv" style="--d:.42s">Збір верифікований БФ «Алярм» — банка офіційна, звіт публічний</li>
+      </ul>
+    </div>
+    <div class="ph" id="aboutPh"><span>тут з'явиться моє фото зі збором від дизайнерів «Алярму»</span></div>
+  </div>
+</section>
+
+<section class="help">
+  <div class="wrap">
+    <p class="eyebrow rv">Як допомогти</p>
+    <h2 class="rv" style="--d:.06s">Два способи, обидва працюють</h2>
+    <div class="grid">
+      <div class="card rv" style="--d:.1s"><strong>1 — Донат</strong><p>Будь-яка сума. 20 грн від двадцяти людей — це вже 400. Кнопка зверху або QR нижче.</p></div>
+      <div class="card rv" style="--d:.2s"><strong>2 — Репост</strong><p>Кинь цю сторінку у свої сторіс чи чат. Репост безкоштовний, а приводить тих, хто задонатить.</p></div>
+    </div>
+    <div class="qr-box qr-hidden" id="qrBox">
+      <img id="qrImg" alt="QR-код банки monobank">
+      <p class="lead">Наведи камеру — відкриється банка monobank.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Євген Мартинюк · Пласт НСОУ · збір у межах відбору на КВТ 30</span>
+    <span>Партнер збору: БФ «Алярм» · @alarm_shtab</span>
+  </div>
+</footer>
+
+<script>
+const GOAL = 15000;
+const RAISED = 0;
+const DONORS = 0;
+const BANKA_URL = "";
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt = n => Math.round(n).toLocaleString("uk-UA") + " грн";
+const pctOf = n => Math.min(100, Math.round(n / GOAL * 100));
+document.getElementById("goal").textContent = fmt(GOAL);
+
+const raisedEl = document.getElementById("raised");
+const pctEl = document.getElementById("pct");
+const fillEl = document.getElementById("fill");
+document.getElementById("donors").textContent = DONORS ? DONORS + " донатів" : "";
+
+let counted = false;
+function runCounter(){
+  if (counted) return; counted = true;
+  const pct = pctOf(RAISED);
+  if (reduced || RAISED === 0){
+    raisedEl.textContent = fmt(RAISED);
+    pctEl.textContent = pct + "%";
+    fillEl.style.transform = "scaleX(" + pct / 100 + ")";
+    return;
+  }
+  fillEl.style.transform = "scaleX(" + pct / 100 + ")";
+  const t0 = performance.now(), dur = 1400;
+  const tick = now => {
+    const p = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    raisedEl.textContent = fmt(RAISED * e);
+    pctEl.textContent = Math.round(pct * e) + "%";
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+const aboutSec = document.querySelector(".about");
+const aboutPh = document.getElementById("aboutPh");
+const io = new IntersectionObserver(entries => {
+  for (const en of entries){
+    if (!en.isIntersecting) continue;
+    if (en.target === aboutSec) aboutPh.classList.add("in");
+    else en.target.classList.add("in");
+    if (en.target.id === "progressCard") runCounter();
+    io.unobserve(en.target);
+  }
+}, {threshold: .18, rootMargin: "0px 0px -40px 0px"});
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+io.observe(aboutSec);
+if (reduced) runCounter();
+
+const bg = document.querySelector(".hero-bg");
+if (!reduced && bg){
+  let ticking = false;
+  addEventListener("scroll", () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const y = Math.min(innerHeight, scrollY);
+      bg.style.transform = "translateY(" + y * .18 + "px)";
+      ticking = false;
+    });
+  }, {passive: true});
+}
+
+if (BANKA_URL) {
+  const b = document.getElementById("donateBtn");
+  b.textContent = "Задонатити в банку";
+  b.href = BANKA_URL;
+  b.removeAttribute("aria-disabled");
+  document.getElementById("qrBox").classList.remove("qr-hidden");
+  document.getElementById("qrImg").src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(BANKA_URL);
+}
+
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  const data = { title: document.title, url: location.href };
+  if (navigator.share) { try { await navigator.share(data); } catch {} }
+  else {
+    await navigator.clipboard.writeText(location.href);
+    const btn = document.getElementById("shareBtn");
+    btn.textContent = "Посилання скопійовано ✓";
+    setTimeout(() => btn.textContent = "Поділитися збором", 2200);
+  }
+});
+</script>
+</body>
+</html>
