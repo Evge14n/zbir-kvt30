@@ -37,6 +37,7 @@ a{color:inherit}
 @keyframes settle{from{transform:scale(1.07)}to{transform:scale(1)}}
 .hero::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(12,14,17,.25) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
+#embers{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero .wrap{position:relative;z-index:1;padding-bottom:64px;width:100%}
 .hero [data-enter]{animation:enter .85s var(--ez) backwards}
 .hero [data-enter="2"]{animation-delay:.12s}
@@ -53,7 +54,12 @@ a{color:inherit}
   font:600 16px Inter;text-decoration:none;border:1px solid var(--line);cursor:pointer;
   transition:transform .22s var(--ez),box-shadow .22s var(--ez),border-color .22s var(--ez)}
 .btn:active{transform:scale(.97)}
-.btn.primary{background:linear-gradient(135deg,var(--flame),var(--flame2));color:#1a1205;border:none}
+.btn.primary{background:linear-gradient(135deg,var(--flame),var(--flame2));color:#1a1205;border:none;
+  position:relative;overflow:hidden}
+.btn.primary::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.45) 50%,transparent 60%);
+  transform:translateX(-120%);transition:transform .6s var(--ez)}
+.btn.primary:hover::after{transform:translateX(120%)}
 .btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(240,160,60,.25)}
 .btn.ghost{background:rgba(20,23,28,.7);backdrop-filter:blur(6px)}
 .btn.ghost:hover{border-color:var(--flame)}
@@ -126,6 +132,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
 <header class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
+  <canvas id="embers" aria-hidden="true"></canvas>
   <div class="wrap">
     <span class="kicker" data-enter="1">Пласт × БФ «Алярм» · відбір на КВТ 30</span>
     <h1 data-enter="2">Збираю на дрони, поки готуюсь до табору</h1>
@@ -264,10 +271,77 @@ if (!reduced && bg){
     if (ticking) return; ticking = true;
     requestAnimationFrame(() => {
       const y = Math.min(innerHeight, scrollY);
-      bg.style.transform = "translateY(" + y * .18 + "px)";
+      bg.style.transform = "translateY(" + y * .18 + "px) scale(" + (1 + y * .00006) + ")";
       ticking = false;
     });
   }, {passive: true});
+}
+
+const saveData = navigator.connection && navigator.connection.saveData;
+const embers = document.getElementById("embers");
+if (!reduced && !saveData && embers){
+  const ctx = embers.getContext("2d");
+  const hero = document.querySelector(".hero");
+  let W, H, parts = [], running = false;
+  const N = () => innerWidth < 760 ? 26 : 56;
+  function size(){
+    W = embers.width = hero.clientWidth;
+    H = embers.height = hero.clientHeight;
+  }
+  function spawn(p){
+    p.x = Math.random() * W;
+    p.y = H * (.55 + Math.random() * .45);
+    p.r = .8 + Math.random() * 2.2;
+    p.vy = .25 + Math.random() * .8;
+    p.vx = (Math.random() - .5) * .3;
+    p.life = 0;
+    p.max = 240 + Math.random() * 240;
+    p.ph = Math.random() * Math.PI * 2;
+    return p;
+  }
+  function loop(){
+    if (!running) return;
+    ctx.clearRect(0, 0, W, H);
+    for (const p of parts){
+      p.life++;
+      p.y -= p.vy;
+      p.x += p.vx + Math.sin(p.life / 40 + p.ph) * .35;
+      if (p.life > p.max || p.y < -10) spawn(p);
+      const t = p.life / p.max;
+      const a = t < .15 ? t / .15 : 1 - (t - .15) / .85;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 7);
+      ctx.fillStyle = "rgba(242,163,60," + (a * .8).toFixed(3) + ")";
+      ctx.shadowColor = "#e0701f";
+      ctx.shadowBlur = 10;
+      ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  }
+  function start(){ if (running) return; running = true; requestAnimationFrame(loop); }
+  function stop(){ running = false; }
+  size();
+  parts = Array.from({length: N()}, () => spawn({}));
+  addEventListener("resize", size);
+  document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
+  const heroIO = new IntersectionObserver(en => en[0].isIntersecting ? start() : stop());
+  heroIO.observe(hero);
+}
+
+if (!reduced && matchMedia("(pointer:fine)").matches){
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("pointermove", e => {
+      const r = card.getBoundingClientRect();
+      const rx = ((e.clientY - r.top) / r.height - .5) * -7;
+      const ry = ((e.clientX - r.left) / r.width - .5) * 7;
+      card.style.transition = "transform .08s linear";
+      card.style.transform = "perspective(800px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) translateY(-4px)";
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.transition = "";
+      card.style.transform = "";
+    });
+  });
 }
 
 if (BANKA_URL) {
