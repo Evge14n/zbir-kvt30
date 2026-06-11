@@ -396,7 +396,8 @@ if (!reduced && !saveData && glc && bg){
       "float rip=exp(-d*9.);" +
       "float v=min(length(u_vel)*38.,1.);" +
       "wave+=(m/max(d,.001))*rip*.04*v;" +
-      "vec3 col=texture2D(u_tex,uv+wave).rgb;" +
+      "vec2 suv=uv+wave;" +
+      "vec3 col=texture2D(u_tex,vec2(suv.x,1.-suv.y)).rgb;" +
       "col+=vec3(1.,.62,.25)*rip*.16*v;" +
       "gl_FragColor=vec4(col,1.);}");
     const prog = gl.createProgram();
@@ -413,29 +414,26 @@ if (!reduced && !saveData && glc && bg){
     const uRes = U("u_res"), uTexres = U("u_texres"), uMouse = U("u_mouse"), uVel = U("u_vel"), uT = U("u_t");
     const tex = gl.createTexture();
     let texReady = false;
-    const img = new Image();
-    const uploadTex = () => {
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.uniform2f(uTexres, img.naturalWidth, img.naturalHeight);
-      texReady = true;
-    };
-    img.onload = uploadTex;
-    img.src = "hero.png";
+    fetch("hero.png")
+      .then(r => r.blob())
+      .then(b => createImageBitmap(b))
+      .then(bm => {
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, bm);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.uniform2f(uTexres, bm.width, bm.height);
+        texReady = true;
+      })
+      .catch(() => { glc.remove(); drawGL = null; });
     heroEl.addEventListener("pointermove", e => {
       const r = heroEl.getBoundingClientRect();
       pointer.x = (e.clientX - r.left) / r.width;
       pointer.y = 1 - (e.clientY - r.top) / r.height;
     }, {passive: true});
     drawGL = t => {
-      if (!texReady){
-        if (img.complete && img.naturalWidth) uploadTex();
-        else return;
-      }
+      if (!texReady) return;
       if (glc.width !== glc.clientWidth || glc.height !== glc.clientHeight){
         glc.width = glc.clientWidth; glc.height = glc.clientHeight;
         gl.viewport(0, 0, glc.width, glc.height);
