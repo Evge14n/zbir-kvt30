@@ -73,7 +73,7 @@ section{padding:74px 0}
 h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:18px}
 .lead{color:var(--mut);max-width:62ch}
 
-.rv{opacity:0;transform:perspective(900px) rotateX(9deg) translateY(26px);transform-origin:center 85%;filter:blur(4px);
+.rv{opacity:0;transform:perspective(900px) rotateX(13deg) translateY(34px);transform-origin:center 85%;filter:blur(4px);
   transition:opacity .8s var(--ez) var(--d,0s),transform .8s var(--ez) var(--d,0s),filter .8s var(--ez) var(--d,0s)}
 .rv.in{opacity:1;transform:perspective(900px) rotateX(0deg) translateY(0);filter:blur(0)}
 
@@ -214,7 +214,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <span>Євген Мартинюк · Пласт НСОУ · збір у межах відбору на КВТ 30</span>
+    <span>Євген Мартинюк · Пласт НСОУ · збір у межах відбору на КВТ 30 · v3</span>
     <span>Партнер збору: БФ «Алярм» · @alarm_shtab</span>
   </div>
 </footer>
@@ -286,10 +286,26 @@ if (!reduced && bg){
   addEventListener("scroll", () => { cam.sy = Math.min(innerHeight, scrollY); }, {passive: true});
   if (matchMedia("(pointer:fine)").matches){
     heroEl.addEventListener("pointermove", e => {
-      cam.tx = ((e.clientX / innerWidth) - .5) * 5;
-      cam.ty = ((e.clientY / innerHeight) - .5) * -4;
+      cam.tx = ((e.clientX / innerWidth) - .5) * 7;
+      cam.ty = ((e.clientY / innerHeight) - .5) * -5.5;
     });
     heroEl.addEventListener("pointerleave", () => { cam.tx = 0; cam.ty = 0; });
+  }
+  if (matchMedia("(pointer:coarse)").matches && "DeviceOrientationEvent" in window){
+    const onTilt = e => {
+      if (e.gamma == null) return;
+      cam.tx = Math.max(-8, Math.min(8, e.gamma / 4));
+      cam.ty = Math.max(-6, Math.min(6, (e.beta - 45) / -6));
+    };
+    if (typeof DeviceOrientationEvent.requestPermission === "function"){
+      heroEl.addEventListener("click", () => {
+        DeviceOrientationEvent.requestPermission()
+          .then(s => { if (s === "granted") addEventListener("deviceorientation", onTilt); })
+          .catch(() => {});
+      }, {once: true});
+    } else {
+      addEventListener("deviceorientation", onTilt);
+    }
   }
 }
 
@@ -350,8 +366,8 @@ if (!reduced && matchMedia("(pointer:fine)").matches){
   document.querySelectorAll(".card").forEach(card => {
     card.addEventListener("pointermove", e => {
       const r = card.getBoundingClientRect();
-      const rx = ((e.clientY - r.top) / r.height - .5) * -7;
-      const ry = ((e.clientX - r.left) / r.width - .5) * 7;
+      const rx = ((e.clientY - r.top) / r.height - .5) * -9;
+      const ry = ((e.clientX - r.left) / r.width - .5) * 9;
       card.style.transition = "transform .08s linear";
       card.style.transform = "perspective(800px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) translateY(-4px)";
       card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
