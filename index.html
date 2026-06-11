@@ -40,6 +40,7 @@ a{color:inherit}
 @keyframes settle{from{transform:scale(1.08)}to{transform:scale(1.04)}}
 .hero::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(12,14,17,.25) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
+#gl{position:absolute;inset:-12% 0;will-change:transform}
 #embers{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero .wrap{position:relative;z-index:1;padding-bottom:64px;width:100%}
 .hero [data-enter]{animation:enter .85s var(--ez) backwards}
@@ -140,6 +141,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
 <header class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
   <canvas id="embers" aria-hidden="true"></canvas>
   <div class="wrap">
     <span class="kicker" data-enter="1">Пласт × БФ «Алярм» · відбір на КВТ 30</span>
@@ -220,7 +222,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 </footer>
 
 <script>
-const GOAL = 15000;
+const GOAL = 2000;
 const RAISED = 0;
 const DONORS = 0;
 const BANKA_URL = "";
@@ -274,13 +276,16 @@ if (reduced) runCounter();
 
 const bg = document.querySelector(".hero-bg");
 const heroEl = document.querySelector(".hero");
+const glc = document.getElementById("gl");
 const cam = {sy: 0, tx: 0, ty: 0, rx: 0, ry: 0};
 function composeHero(){
   if (!bg) return;
   cam.rx += (cam.tx - cam.rx) * .07;
   cam.ry += (cam.ty - cam.ry) * .07;
-  bg.style.transform = "translateY(" + (cam.sy * .18).toFixed(1) + "px) scale(" +
+  const t = "translateY(" + (cam.sy * .18).toFixed(1) + "px) scale(" +
     (1.04 + cam.sy * .00006).toFixed(4) + ") rotateX(" + cam.ry.toFixed(3) + "deg) rotateY(" + cam.rx.toFixed(3) + "deg)";
+  bg.style.transform = t;
+  if (glc) glc.style.transform = t;
 }
 if (!reduced && bg){
   addEventListener("scroll", () => { cam.sy = Math.min(innerHeight, scrollY); }, {passive: true});
@@ -335,6 +340,7 @@ if (!reduced && !saveData && embers){
   function loop(){
     if (!running) return;
     composeHero();
+    if (drawGL) drawGL(performance.now() / 1000);
     ctx.clearRect(0, 0, W, H);
     for (const p of parts){
       p.life++;
@@ -360,6 +366,90 @@ if (!reduced && !saveData && embers){
   document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
   const heroIO = new IntersectionObserver(en => en[0].isIntersecting ? start() : stop());
   heroIO.observe(hero);
+}
+
+const pointer = {x: .5, y: .35, px: .5, py: .35, vx: 0, vy: 0};
+let drawGL = null;
+if (!reduced && !saveData && glc && bg){
+  try {
+    const gl = glc.getContext("webgl", {antialias: false, alpha: false});
+    if (!gl) throw new Error("no webgl");
+    const compile = (type, src) => {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src); gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+      return sh;
+    };
+    const vs = compile(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}");
+    const fs = compile(gl.FRAGMENT_SHADER,
+      "precision mediump float;" +
+      "uniform sampler2D u_tex;uniform vec2 u_res,u_texres,u_mouse,u_vel;uniform float u_t;" +
+      "void main(){" +
+      "vec2 frag=gl_FragCoord.xy/u_res;" +
+      "float ca=u_res.x/u_res.y,ta=u_texres.x/u_texres.y;" +
+      "vec2 uv=frag;" +
+      "if(ca>ta){uv.y=(frag.y-.5)*(ta/ca)+.5;}else{uv.x=(frag.x-.5)*(ca/ta)+.5;}" +
+      "float heat=1.-smoothstep(0.,.55,uv.y);" +
+      "vec2 wave=vec2(sin(uv.y*70.+u_t*1.6)+sin(uv.y*23.-u_t*.7),cos(uv.x*60.-u_t*1.2))*vec2(.0028,.0016)*heat;" +
+      "vec2 m=uv-u_mouse;m.x*=ca;" +
+      "float d=length(m);" +
+      "float rip=exp(-d*9.);" +
+      "float v=min(length(u_vel)*38.,1.);" +
+      "wave+=(m/max(d,.001))*rip*.04*v;" +
+      "vec3 col=texture2D(u_tex,uv+wave).rgb;" +
+      "col+=vec3(1.,.62,.25)*rip*.16*v;" +
+      "gl_FragColor=vec4(col,1.);}");
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error("link fail");
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "a");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = n => gl.getUniformLocation(prog, n);
+    const uRes = U("u_res"), uTexres = U("u_texres"), uMouse = U("u_mouse"), uVel = U("u_vel"), uT = U("u_t");
+    const tex = gl.createTexture();
+    let texReady = false;
+    const img = new Image();
+    img.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.uniform2f(uTexres, img.width, img.height);
+      texReady = true;
+    };
+    img.src = "hero.png";
+    heroEl.addEventListener("pointermove", e => {
+      const r = heroEl.getBoundingClientRect();
+      pointer.x = (e.clientX - r.left) / r.width;
+      pointer.y = 1 - (e.clientY - r.top) / r.height;
+    }, {passive: true});
+    drawGL = t => {
+      if (!texReady) return;
+      if (glc.width !== glc.clientWidth || glc.height !== glc.clientHeight){
+        glc.width = glc.clientWidth; glc.height = glc.clientHeight;
+        gl.viewport(0, 0, glc.width, glc.height);
+      }
+      pointer.vx += ((pointer.x - pointer.px) - pointer.vx) * .12;
+      pointer.vy += ((pointer.y - pointer.py) - pointer.vy) * .12;
+      pointer.px += (pointer.x - pointer.px) * .18;
+      pointer.py += (pointer.y - pointer.py) * .18;
+      gl.uniform2f(uRes, glc.width, glc.height);
+      gl.uniform2f(uMouse, pointer.px, pointer.py);
+      gl.uniform2f(uVel, pointer.vx, pointer.vy);
+      gl.uniform1f(uT, t);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+  } catch (err) {
+    glc.remove();
+    drawGL = null;
+  }
 }
 
 if (!reduced && matchMedia("(pointer:fine)").matches){
