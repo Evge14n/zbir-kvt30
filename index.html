@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script type="module" src="drone3d.js" defer></script>
+<script type="module" src="model-viewer.min.js"></script>
 <style>
 :root{
   --bg:#0c0e11; --panel:#14171c; --line:#23272e;
@@ -102,16 +102,14 @@ h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:18px}
 .card h3{font-size:17px;margin-bottom:8px}
 .card p{color:var(--mut);font-size:15px}
 
-.drone-sec{height:230vh;position:relative}
-#droneStage{position:sticky;top:0;height:100svh;overflow:hidden}
-#drone3d{width:100%;height:100%;display:block;touch-action:pan-y}
-#droneLabels{position:absolute;inset:0;pointer-events:none}
-.dl{position:absolute;left:0;top:0;color:#ffd9a0;font:600 12px Inter;letter-spacing:.04em;
-  background:rgba(12,14,17,.72);border:1px solid #3a2f1d;padding:5px 10px;border-radius:9px;
-  opacity:0;transition:opacity .5s var(--ez);white-space:nowrap}
-.drone-head{position:absolute;top:9svh;left:0;right:0;text-align:center;pointer-events:none;z-index:1}
-.drone-head .eyebrow{margin-bottom:6px}
-.mv-hint{color:var(--mut);font-size:13px;text-align:center;position:absolute;bottom:5svh;left:0;right:0;pointer-events:none}
+.fpv-sec{padding:70px 0;position:relative;overflow:hidden}
+.fpv-glow{position:absolute;left:50%;top:58%;width:min(700px,92vw);height:min(700px,92vw);
+  transform:translate(-50%,-50%);pointer-events:none;
+  background:radial-gradient(circle,rgba(224,112,31,.2),transparent 64%);filter:blur(18px)}
+.fpv-wrap{position:relative;z-index:1;text-align:center}
+.fpv-wrap .lead{margin:0 auto 14px}
+#fpvMV{width:100%;height:min(560px,66svh);background:transparent;--poster-color:transparent}
+.fpv-hint{color:var(--mut);font-size:13px;margin-top:6px}
 .about{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
 .about .ph{aspect-ratio:3/4;border-radius:22px;border:1px solid var(--line);
   background:var(--panel) url(about.png) center/cover no-repeat;
@@ -193,15 +191,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
   </div>
 </section>
 
-<section class="drone-sec" id="droneSec">
-  <div id="droneStage">
-    <div class="drone-head">
-      <p class="eyebrow">7-дюймовий FPV</p>
-      <h2>Скроль — і дрон розкладеться на запчастини</h2>
-    </div>
-    <canvas id="drone3d" aria-label="Інтерактивна 3D-модель 7-дюймового FPV-дрона"></canvas>
-    <div id="droneLabels"></div>
-    <p class="mv-hint">саме на таке залізо йдуть твої донати</p>
+<section class="fpv-sec" id="fpvSec">
+  <div class="fpv-glow"></div>
+  <div class="wrap fpv-wrap">
+    <p class="eyebrow rv">Той самий клас заліза</p>
+    <h2 class="rv" style="--d:.06s">7-дюймовий FPV — ось що тримає небо</h2>
+    <p class="lead rv" style="--d:.12s">Карбонова рама, мотори на топовому SpeedyBee-стеку, FPV-камера. Це справжня 3D-модель такого дрона — покрути й роздивись зблизька. Саме на таке залізо йдуть твої донати.</p>
+    <model-viewer class="rv" style="--d:.18s" id="fpvMV" src="fpv.glb"
+      camera-controls auto-rotate auto-rotate-delay="600" rotation-per-second="22deg"
+      interaction-prompt="none" exposure="1.55" shadow-intensity="1" shadow-softness="0.85"
+      tone-mapping="neutral" environment-image="neutral" camera-orbit="35deg 72deg 110%"
+      alt="3D-модель 7-дюймового FPV-дрона"></model-viewer>
+    <p class="fpv-hint">↻ потягни, щоб роздивитись з усіх боків</p>
   </div>
 </section>
 
@@ -503,6 +504,11 @@ if (BANKA_URL) {
   document.getElementById("qrBox").classList.remove("qr-hidden");
   document.getElementById("qrImg").src =
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(BANKA_URL);
+}
+
+if (reduced){
+  const fpv = document.getElementById("fpvMV");
+  if (fpv) fpv.removeAttribute("auto-rotate");
 }
 
 document.getElementById("shareBtn").addEventListener("click", async () => {
