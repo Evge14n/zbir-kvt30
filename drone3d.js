@@ -246,7 +246,7 @@ function frameLoop(now){
 
   pt.cx += (pt.x - pt.cx) * .06;
   pt.cy += (pt.y - pt.cy) * .06;
-  const radius = 7 - e * 1.2;
+  const radius = 7 + e * 2.4;
   camera.position.set(
     Math.sin(.65 + pt.cx * .5) * radius,
     2.1 + e * .9 - pt.cy * 1.2,
