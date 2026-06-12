@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script type="module" src="model-viewer.min.js"></script>
+<script type="module" src="drone3d.js" defer></script>
 <style>
 :root{
   --bg:#0c0e11; --panel:#14171c; --line:#23272e;
@@ -102,8 +102,16 @@ h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:18px}
 .card h3{font-size:17px;margin-bottom:8px}
 .card p{color:var(--mut);font-size:15px}
 
-model-viewer{width:100%;height:440px;background:transparent;--poster-color:transparent;border-radius:22px}
-.mv-hint{color:var(--mut);font-size:13px;text-align:center;margin-top:6px}
+.drone-sec{height:230vh;position:relative}
+#droneStage{position:sticky;top:0;height:100svh;overflow:hidden}
+#drone3d{width:100%;height:100%;display:block;touch-action:pan-y}
+#droneLabels{position:absolute;inset:0;pointer-events:none}
+.dl{position:absolute;left:0;top:0;color:#ffd9a0;font:600 12px Inter;letter-spacing:.04em;
+  background:rgba(12,14,17,.72);border:1px solid #3a2f1d;padding:5px 10px;border-radius:9px;
+  opacity:0;transition:opacity .5s var(--ez);white-space:nowrap}
+.drone-head{position:absolute;top:9svh;left:0;right:0;text-align:center;pointer-events:none;z-index:1}
+.drone-head .eyebrow{margin-bottom:6px}
+.mv-hint{color:var(--mut);font-size:13px;text-align:center;position:absolute;bottom:5svh;left:0;right:0;pointer-events:none}
 .about{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
 .about .ph{aspect-ratio:3/4;border-radius:22px;border:1px solid var(--line);
   background:var(--panel) url(about.png) center/cover no-repeat;
@@ -182,11 +190,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
       <div class="card rv" style="--d:.2s"><div class="n">02</div><h3>Пікапи для ССО</h3><p>Машини для підрозділу Сил спеціальних операцій — мобільність, що рятує життя.</p></div>
       <div class="card rv" style="--d:.3s"><div class="n">03</div><h3>100 дронів — 59 ОШБр</h3><p>1 млн грн майстерні Drone Up на модернізацію сотні дронів для «Хижаків висот».</p></div>
     </div>
-    <model-viewer class="rv" id="droneMV" style="--d:.15s" src="drone.glb"
-      camera-controls auto-rotate auto-rotate-delay="800" rotation-per-second="25deg"
-      shadow-intensity="1" exposure="1.1" interaction-prompt="none"
-      alt="3D-модель FPV-дрона"></model-viewer>
-    <p class="mv-hint rv" style="--d:.2s">↻ покрути дрон — такі полетять на фронт</p>
+  </div>
+</section>
+
+<section class="drone-sec" id="droneSec">
+  <div id="droneStage">
+    <div class="drone-head">
+      <p class="eyebrow">7-дюймовий FPV</p>
+      <h2>Скроль — і дрон розкладеться на запчастини</h2>
+    </div>
+    <canvas id="drone3d" aria-label="Інтерактивна 3D-модель 7-дюймового FPV-дрона"></canvas>
+    <div id="droneLabels"></div>
+    <p class="mv-hint">саме на таке залізо йдуть твої донати</p>
   </div>
 </section>
 
@@ -488,11 +503,6 @@ if (BANKA_URL) {
   document.getElementById("qrBox").classList.remove("qr-hidden");
   document.getElementById("qrImg").src =
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(BANKA_URL);
-}
-
-if (reduced){
-  const mv = document.getElementById("droneMV");
-  if (mv) mv.removeAttribute("auto-rotate");
 }
 
 document.getElementById("shareBtn").addEventListener("click", async () => {
