@@ -41,8 +41,12 @@ a{color:inherit}
 .logo{font:700 16px Unbounded;letter-spacing:.01em}
 .logo b{color:var(--flame)}
 .nav-links{display:flex;align-items:center;gap:26px}
-.nav-links a{font:600 14px Inter;color:var(--mut);text-decoration:none;transition:color .2s var(--ez)}
-.nav-links a:hover{color:var(--txt)}
+.nav-links a{font:600 14px Inter;color:#d2d7dd;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.45);
+  transition:color .2s var(--ez)}
+.nav-links a:hover{color:#fff}
+.nav.scrolled .nav-links a{text-shadow:none}
+.logo{font:700 16px Unbounded;letter-spacing:.01em;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+.nav.scrolled .logo{text-shadow:none}
 .nav-cta{padding:9px 18px;border-radius:11px;background:linear-gradient(135deg,var(--flame),var(--flame2));
   color:#1a1205!important;transition:transform .2s var(--ez),box-shadow .2s var(--ez)}
 .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(240,160,60,.28)}
