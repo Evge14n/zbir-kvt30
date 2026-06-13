@@ -35,12 +35,11 @@ a{color:inherit}
 .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
 
 .hero{position:relative;min-height:92svh;display:flex;align-items:flex-end;overflow:hidden}
-.hero-bg{position:absolute;inset:-12% 0;background:url(hero.png) center/cover no-repeat;
+.hero-bg{position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;
   will-change:transform;animation:settle 2.4s var(--ez) backwards}
 @keyframes settle{from{transform:scale(1.08)}to{transform:scale(1.04)}}
 .hero::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(12,14,17,.25) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
-#gl{position:absolute;top:-12%;left:0;width:100%;height:124%;will-change:transform}
+  background:linear-gradient(180deg,rgba(12,14,17,.3) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
 #embers{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero .wrap{position:relative;z-index:1;padding-bottom:64px;width:100%}
 .hero [data-enter]{animation:enter .85s var(--ez) backwards}
@@ -153,8 +152,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 <body>
 
 <header class="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
-  <canvas id="gl" aria-hidden="true"></canvas>
+  <video class="hero-bg" id="heroVid" autoplay muted loop playsinline poster="hero.png" aria-hidden="true">
+    <source src="hero.mp4" type="video/mp4">
+  </video>
   <canvas id="embers" aria-hidden="true"></canvas>
   <div class="wrap">
     <span class="kicker" data-enter="1">Благодійний збір × БФ «Алярм»</span>
@@ -202,7 +202,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
     <h2 class="rv" style="--d:.06s">7-дюймовий FPV — ось що тримає небо</h2>
     <p class="lead rv" style="--d:.12s">Карбонова рама, мотори з мідними обмотками, FPV-камера, SpeedyBee-стек. Саме на таке залізо йдуть твої донати — кожна гривня наближає ще один такий дрон до фронту.</p>
     <div class="fpv-frame rv" id="fpvFrame" style="--d:.18s">
-      <img src="fpv-photo.jpg" alt="7-дюймовий FPV-дрон: карбонова рама, мотори, FPV-камера" loading="lazy">
+      <img src="drone-render.png" alt="7-дюймовий FPV-дрон: карбонова рама, мотори, FPV-камера" loading="lazy">
     </div>
   </div>
 </section>
@@ -253,6 +253,7 @@ const DONORS = 0;
 const BANKA_URL = "";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (reduced){ const hv = document.getElementById("heroVid"); if (hv){ hv.removeAttribute("autoplay"); hv.pause(); } }
 const fmt = n => Math.round(n).toLocaleString("uk-UA") + " грн";
 const pctOf = n => Math.min(100, Math.round(n / GOAL * 100));
 document.getElementById("goal").textContent = fmt(GOAL);
