@@ -3,167 +3,160 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Збір на дрони для ЗСУ × БФ «Алярм»</title>
-<meta name="description" content="Благодійний збір на автоматизацію БпЛА, пікапи для ССО та модернізацію дронів разом із фондом «Алярм». Кожна гривня — залізо для Сил Оборони.">
-<meta property="og:title" content="Збір на дрони для ЗСУ — долучайся!">
-<meta property="og:description" content="Кожна гривня стає залізом для 80 ОДШБр, ССО та 59 ОШБр. Донать або репость.">
-<meta property="og:image" content="https://evge14n.github.io/zbir-kvt30/hero.png">
+<title>Збір на FPV-дрони для ЗСУ · Пласт × БФ «Алярм»</title>
+<meta name="description" content="Благодійний збір на FPV-дрони для Сил Оборони разом із фондом «Алярм». Кожна гривня — крило в небі. Підтримай.">
+<meta property="og:title" content="Збір на FPV-дрони для ЗСУ — підтримай">
+<meta property="og:description" content="Кожна гривня стає дроном на фронті. Донат у банку monobank або репост.">
+<meta property="og:image" content="https://evge14n.github.io/zbir-kvt30/drone-render.png">
 <meta property="og:url" content="https://evge14n.github.io/zbir-kvt30/">
 <meta property="og:type" content="website">
-<meta property="og:image:width" content="1376">
-<meta property="og:image:height" content="768">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛰️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c0e11; --panel:#14171c; --line:#23272e;
-  --txt:#eef0f2; --mut:#9aa3ad;
-  --flame:#f2a33c; --flame2:#e0701f; --plast:#8e2538;
+  --bg:#07090c; --bg2:#0b0f14; --panel:#0e131a; --line:#1b2530;
+  --txt:#e9edf2; --mut:#8b95a3;
+  --yellow:#ffd60a; --yellow2:#f4c40a;
+  --hud:#5aa9ff; --hud-dim:rgba(90,169,255,.4);
   --ez:cubic-bezier(.22,1,.36,1);
-  --ez-clip:cubic-bezier(.77,0,.175,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font:400 17px/1.65 Inter,system-ui,sans-serif;overflow-x:hidden}
-h1,h2,h3{font-family:Unbounded,sans-serif;line-height:1.15}
-a{color:inherit}
-::selection{background:var(--flame);color:#1a1205}
-:focus-visible{outline:2px solid var(--flame);outline-offset:3px;border-radius:6px}
-.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+body{background:var(--bg);color:var(--txt);font:400 17px/1.6 Manrope,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Unbounded,sans-serif;line-height:1.1;font-weight:800}
+a{color:inherit;text-decoration:none}
+.mono{font-family:"JetBrains Mono",monospace}
+::selection{background:var(--yellow);color:#1a1400}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
 
-.nav{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid transparent;
-  transition:background .3s var(--ez),border-color .3s var(--ez)}
-.nav.scrolled{background:rgba(12,14,17,.82);backdrop-filter:blur(14px);border-color:var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
-.logo{font:700 16px Unbounded;letter-spacing:.01em}
-.logo b{color:var(--flame)}
-.nav-links{display:flex;align-items:center;gap:26px}
-.nav-links a{font:600 14px Inter;color:#d2d7dd;text-decoration:none;text-shadow:0 1px 4px rgba(0,0,0,.45);
-  transition:color .2s var(--ez)}
-.nav-links a:hover{color:#fff}
-.nav.scrolled .nav-links a{text-shadow:none}
-.logo{font:700 16px Unbounded;letter-spacing:.01em;text-shadow:0 1px 4px rgba(0,0,0,.45)}
-.nav.scrolled .logo{text-shadow:none}
-.nav-cta{padding:9px 18px;border-radius:11px;background:linear-gradient(135deg,var(--flame),var(--flame2));
-  color:#1a1205!important;transition:transform .2s var(--ez),box-shadow .2s var(--ez)}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(240,160,60,.28)}
-@media(max-width:600px){.nav-links a:not(.nav-cta){display:none}}
+/* grain + scanlines global overlay */
+body::before{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+body::after{content:"";position:fixed;inset:0;z-index:101;pointer-events:none;opacity:.35;
+  background:repeating-linear-gradient(180deg,transparent 0 2px,rgba(0,0,0,.5) 2px 3px)}
 
-.hero{position:relative;min-height:92svh;display:flex;align-items:flex-end;overflow:hidden}
-.hero-bg{position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;
-  will-change:transform;animation:settle 2.4s var(--ez) backwards}
-@keyframes settle{from{transform:scale(1.08)}to{transform:scale(1.04)}}
-.hero::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(12,14,17,.3) 0%,rgba(12,14,17,.55) 55%,var(--bg) 100%)}
-#embers{position:absolute;inset:0;z-index:0;pointer-events:none}
-.hero .wrap{position:relative;z-index:1;padding-bottom:64px;width:100%}
-.hero [data-enter]{animation:enter .85s var(--ez) backwards}
-.hero [data-enter="2"]{animation-delay:.12s}
-.hero [data-enter="3"]{animation-delay:.24s}
-.hero [data-enter="4"]{animation-delay:.38s}
-@keyframes enter{from{opacity:0;transform:translateY(16px);filter:blur(6px)}
-  to{opacity:1;transform:none;filter:blur(0)}}
-.kicker{display:inline-block;background:var(--plast);padding:7px 14px;border-radius:999px;
-  font:600 12px/1 Inter;letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px}
-.hero h1{font-size:clamp(30px,5.6vw,58px);font-weight:900;max-width:17ch}
-.hero p.sub{margin:16px 0 28px;color:#d8dde2;max-width:54ch;font-size:clamp(16px,2vw,19px)}
-.cta-row{display:flex;gap:14px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:10px;border-radius:14px;padding:16px 26px;
-  font:600 16px Inter;text-decoration:none;border:1px solid var(--line);cursor:pointer;
-  transition:transform .22s var(--ez),box-shadow .22s var(--ez),border-color .22s var(--ez)}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:30;border-bottom:1px solid transparent;transition:background .3s var(--ez),border-color .3s var(--ez)}
+.nav.scrolled{background:rgba(7,9,12,.85);backdrop-filter:blur(14px);border-color:var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font:700 13px/1 "JetBrains Mono",monospace;letter-spacing:.18em;text-transform:uppercase}
+.logo b{color:var(--hud)}
+.nav-cta{padding:9px 18px;border-radius:8px;background:var(--yellow);color:#1a1400;font:700 13px Manrope;
+  letter-spacing:.03em;transition:transform .2s var(--ez),box-shadow .2s var(--ez)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(255,214,10,.3)}
+
+/* HERO */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
+.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+.hero::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(120% 80% at 50% 30%,transparent 30%,rgba(7,9,12,.7) 100%),
+  linear-gradient(180deg,rgba(7,9,12,.55),rgba(7,9,12,.35) 40%,var(--bg) 100%)}
+.hud{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hud .corner{position:absolute;width:46px;height:46px;border:2px solid var(--hud-dim)}
+.hud .tl{top:78px;left:22px;border-right:0;border-bottom:0}
+.hud .tr{top:78px;right:22px;border-left:0;border-bottom:0}
+.hud .bl{bottom:30px;left:22px;border-right:0;border-top:0}
+.hud .br{bottom:30px;right:22px;border-left:0;border-top:0}
+.hud .reticle{position:absolute;top:50%;left:50%;width:64px;height:64px;transform:translate(-50%,-50%);opacity:.5}
+.hud .reticle::before,.hud .reticle::after{content:"";position:absolute;background:var(--hud-dim)}
+.hud .reticle::before{top:50%;left:0;right:0;height:1px}
+.hud .reticle::after{left:50%;top:0;bottom:0;width:1px}
+.hud .ring{position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%);
+  border:1px solid var(--hud-dim);border-radius:50%}
+.tele{position:absolute;z-index:2;font:500 11.5px/1.7 "JetBrains Mono",monospace;color:var(--hud);letter-spacing:.05em;opacity:.85}
+.tele.lt{top:84px;left:34px}
+.tele.rt{top:84px;right:34px;text-align:right}
+.tele .rec{color:#ff4d4d}
+.tele .blink{animation:blink 1.2s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero .wrap{position:relative;z-index:3;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:10px;font:600 12px/1 "JetBrains Mono",monospace;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--hud);
+  border:1px solid var(--hud-dim);padding:8px 14px;border-radius:999px;margin-bottom:22px}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
+.hero h1{font-size:clamp(34px,6.4vw,76px);font-weight:900;max-width:15ch;letter-spacing:-.01em}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero p.sub{margin:22px 0 32px;color:#c3cbd5;max-width:50ch;font-size:clamp(16px,2vw,19px)}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:11px;padding:17px 30px;
+  font:700 16px Manrope;cursor:pointer;border:1px solid var(--line);transition:transform .2s var(--ez),box-shadow .2s var(--ez),border-color .2s var(--ez)}
 .btn:active{transform:scale(.97)}
-.btn.primary{background:linear-gradient(135deg,var(--flame),var(--flame2));color:#1a1205;border:none;
-  position:relative;overflow:hidden}
-.btn.primary::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.45) 50%,transparent 60%);
-  transform:translateX(-120%);transition:transform .6s var(--ez)}
-.btn.primary:hover::after{transform:translateX(120%)}
-.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(240,160,60,.25)}
-.btn.ghost{background:rgba(20,23,28,.7);backdrop-filter:blur(6px)}
-.btn.ghost:hover{border-color:var(--flame)}
-.btn[aria-disabled="true"]{opacity:.55;cursor:default;pointer-events:none}
+.btn.primary{background:var(--yellow);color:#1a1400;border:none;letter-spacing:.02em}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(255,214,10,.32)}
+.btn.ghost{background:rgba(14,19,26,.6);color:var(--txt);backdrop-filter:blur(6px)}
+.btn.ghost:hover{border-color:var(--hud)}
 
-section{padding:74px 0}
-.eyebrow{color:var(--flame);font:600 13px Inter;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
-h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:18px}
-.lead{color:var(--mut);max-width:62ch}
+section{padding:96px 0;position:relative}
+.eyebrow{font:600 12px/1 "JetBrains Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--hud);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--hud-dim)}
+h2{font-size:clamp(26px,4vw,42px);margin-bottom:20px;letter-spacing:-.01em}
+.lead{color:var(--mut);max-width:60ch;font-size:18px}
 
-.rv{opacity:0;transform:perspective(900px) rotateX(13deg) translateY(34px);transform-origin:center 85%;filter:blur(4px);
-  transition:opacity .8s var(--ez) var(--d,0s),transform .8s var(--ez) var(--d,0s),filter .8s var(--ez) var(--d,0s)}
-.rv.in{opacity:1;transform:perspective(900px) rotateX(0deg) translateY(0);filter:blur(0)}
+/* WHY facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:40px}
+.fact{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:linear-gradient(180deg,var(--panel),var(--bg2));position:relative;overflow:hidden}
+.fact::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--hud),transparent)}
+.fact .big{font:800 40px/1 Unbounded;color:var(--yellow);margin-bottom:10px}
+.fact p{color:var(--mut);font-size:15.5px}
 
-.progress-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:30px 28px;margin-top:34px}
-.amounts{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
-.amounts .got{font:700 clamp(28px,4.4vw,44px) Unbounded;color:var(--flame);font-variant-numeric:tabular-nums}
-.amounts .goal{color:var(--mut);font-size:15px}
-.bar{height:16px;background:#0a0c0e;border:1px solid var(--line);border-radius:999px;margin:18px 0 10px;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:999px;width:100%;
-  background:linear-gradient(90deg,var(--flame2),var(--flame));
-  transform:scaleX(0);transform-origin:left;will-change:transform;
-  transition:transform 1.4s var(--ez)}
-.bar-note{display:flex;justify-content:space-between;color:var(--mut);font-size:14px}
+/* DRONE showcase */
+.drone-sec{text-align:center;overflow:hidden}
+.drone-stage{position:relative;max-width:880px;margin:36px auto 0;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#04060a}
+.drone-stage video,.drone-stage img{width:100%;display:block}
+.drone-stage .scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(90,169,255,.04) 3px 4px)}
+.drone-stage .lbl{position:absolute;left:16px;bottom:14px;font:500 11px "JetBrains Mono",monospace;color:var(--hud);letter-spacing:.08em;background:rgba(7,9,12,.6);padding:5px 10px;border-radius:7px;border:1px solid var(--hud-dim)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:34px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;
-  position:relative;overflow:hidden;
-  transition:transform .25s var(--ez),border-color .25s var(--ez),box-shadow .25s var(--ez)}
-.card::after{content:"";position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .35s var(--ez);
-  background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(255,210,140,.1),transparent 62%)}
-.card:hover::after{opacity:1}
-.card:hover{transform:translateY(-4px);border-color:#3a4048;box-shadow:0 16px 36px rgba(0,0,0,.35)}
-.card .n{font:700 26px Unbounded;color:var(--flame);margin-bottom:8px}
-.card h3{font-size:17px;margin-bottom:8px}
-.card p{color:var(--mut);font-size:15px}
+/* GOAL */
+.goal-card{margin-top:40px;border:1px solid var(--line);border-radius:22px;padding:38px 32px;background:linear-gradient(180deg,var(--panel),var(--bg2))}
+.goal-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.goal-raised{font:900 clamp(34px,6vw,60px)/1 Unbounded;color:var(--yellow);font-variant-numeric:tabular-nums}
+.goal-of{color:var(--mut);font:500 16px "JetBrains Mono",monospace}
+.goal-of b{color:var(--txt)}
+.track{height:18px;background:#04060a;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:18px 0 12px}
+.track .fill{height:100%;width:100%;transform-origin:left;transform:scaleX(0);border-radius:999px;
+  background:linear-gradient(90deg,var(--yellow2),var(--yellow));box-shadow:0 0 18px rgba(255,214,10,.4)}
+.goal-foot{display:flex;justify-content:space-between;color:var(--mut);font:500 13px "JetBrains Mono",monospace}
 
-.fpv-sec{padding:70px 0;position:relative;overflow:hidden}
-.fpv-glow{position:absolute;left:50%;top:58%;width:min(820px,96vw);height:min(640px,80vw);
-  transform:translate(-50%,-50%);pointer-events:none;
-  background:radial-gradient(circle,rgba(224,112,31,.16),transparent 66%);filter:blur(22px)}
-.fpv-wrap{position:relative;z-index:1;text-align:center}
-.fpv-wrap .lead{margin:0 auto 24px}
-.fpv-frame{position:relative;max-width:740px;margin:0 auto;border-radius:20px;overflow:hidden;
-  border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.55);
-  transition:transform .18s var(--ez);will-change:transform}
-.fpv-frame img{width:100%;display:block}
-.fpv-frame::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(12,14,17,.4) 100%),
-    linear-gradient(180deg,rgba(12,14,17,.28),transparent 28%,transparent 74%,rgba(12,14,17,.5))}
-.about{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
-.about .ph{aspect-ratio:3/4;border-radius:22px;border:1px solid var(--line);
-  background:var(--panel) url(about.png) center/cover no-repeat;
-  display:flex;align-items:flex-end;justify-content:center;
-  color:#cfd5da;font-size:13px;padding:14px;text-align:center;
-  clip-path:inset(0 0 100% 0 round 22px);transition:clip-path 1s var(--ez-clip) .15s}
-.about .ph span{background:rgba(12,14,17,.65);backdrop-filter:blur(4px);padding:6px 12px;border-radius:10px}
-.about .ph.in{clip-path:inset(0 0 0 0 round 22px)}
-.about ul{list-style:none;margin-top:18px;display:grid;gap:10px}
-.about li{padding-left:26px;position:relative;color:#cfd5da}
-.about li::before{content:"";position:absolute;left:0;top:9px;width:10px;height:10px;border-radius:3px;
-  background:linear-gradient(135deg,var(--flame),var(--flame2))}
+/* USE cards */
+.use-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:40px}
+.use{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:var(--panel);transition:transform .25s var(--ez),border-color .25s var(--ez)}
+.use:hover{transform:translateY(-4px);border-color:var(--hud-dim)}
+.use .n{font:700 13px "JetBrains Mono",monospace;color:var(--hud);margin-bottom:14px;letter-spacing:.1em}
+.use h3{font-size:18px;margin-bottom:8px;font-family:Unbounded;font-weight:700}
+.use p{color:var(--mut);font-size:15px}
 
-.help .grid .card strong{display:block;margin-bottom:6px}
-.qr-box{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:26px}
-.qr-box img{width:148px;height:148px;border-radius:14px;background:#fff;padding:8px}
-.qr-hidden{display:none}
+/* DONATE */
+.donate{text-align:center;background:linear-gradient(180deg,var(--bg),var(--bg2));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.donate h2{max-width:18ch;margin:0 auto 16px}
+.donate .lead{margin:0 auto 32px}
+.donate-box{display:flex;gap:34px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.qr{width:188px;height:188px;border-radius:16px;background:#fff;padding:12px;flex-shrink:0}
+.qr img{width:100%;height:100%;display:block}
+.donate-info{text-align:left;max-width:340px}
+.donate-info .big-btn{font-size:18px;padding:20px 34px;width:100%;justify-content:center;margin-bottom:14px}
+.donate-info .jarline{font:500 13px "JetBrains Mono",monospace;color:var(--mut);word-break:break-all}
+.donate-info .jarline b{color:var(--hud)}
 
-footer{border-top:1px solid var(--line);padding:36px 0 46px;color:var(--mut);font-size:14px}
-footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+footer{padding:54px 0;text-align:center}
+footer .slava{font:800 22px Unbounded;color:var(--yellow);margin-bottom:14px}
+footer .meta{color:var(--mut);font:500 13px "JetBrains Mono",monospace;letter-spacing:.05em;line-height:2}
+footer a{color:var(--hud)}
 
-@media (max-width:760px){
-  .about{grid-template-columns:1fr}
-  section{padding:56px 0}
-  .kicker{font-size:10.5px;letter-spacing:.07em}
+@media(max-width:600px){
+  section{padding:68px 0}
+  .donate-info{text-align:center}
+  .hud .corner{width:32px;height:32px}
+  .tele{font-size:10px}
+  .tele.lt{left:26px}.tele.rt{right:26px}
 }
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .hero-bg{transform:none!important}
-  .rv{opacity:1;transform:none;filter:none}
-  .about .ph{clip-path:none}
-  .bar i{transform:none!important}
+  .hero-vid{display:none}
+  .tele .blink{animation:none}
 }
 </style>
 </head>
@@ -171,399 +164,178 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
 <nav class="nav" id="nav">
   <div class="wrap nav-in">
-    <span class="logo">Збір&nbsp;×&nbsp;<b>Алярм</b></span>
-    <div class="nav-links">
-      <a href="#progress">Прогрес</a>
-      <a href="#help">Як допомогти</a>
-      <a class="nav-cta" href="#help" id="navDonate">Задонатити</a>
-    </div>
+    <span class="logo">ПЛАСТ · <b>КВТ 30</b></span>
+    <a class="nav-cta" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">Підтримати</a>
   </div>
 </nav>
 
-<header class="hero">
-  <video class="hero-bg" id="heroVid" autoplay muted loop playsinline poster="hero.png" aria-hidden="true">
+<header class="hero" id="top">
+  <video class="hero-vid" id="heroVid" autoplay muted loop playsinline poster="drone-render.png" aria-hidden="true">
     <source src="hero.mp4" type="video/mp4">
   </video>
-  <canvas id="embers" aria-hidden="true"></canvas>
+  <div class="hud" aria-hidden="true">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="reticle"></span><span class="ring"></span>
+  </div>
+  <div class="tele lt" aria-hidden="true">
+    <span class="rec blink">● REC</span> &nbsp;4K · 60FPS<br>
+    ALT 412 M<br>SPD 94 KM/H
+  </div>
+  <div class="tele rt" aria-hidden="true">
+    BAT 87%<br>GPS 49.55 / 25.59<br>SIG ▮▮▮▮▯
+  </div>
   <div class="wrap">
-    <span class="kicker" data-enter="1">Благодійний збір × БФ «Алярм»</span>
-    <h1 data-enter="2">Збираємо на дрони, поки тримається небо</h1>
-    <p class="sub" data-enter="3">Разом із благодійним фондом «Алярм» збираємо на дрони та техніку для тих, хто боронить країну. Кожна гривня стає залізом на фронті.</p>
-    <div class="cta-row" data-enter="4">
-      <a class="btn primary" id="donateBtn" href="#" aria-disabled="true">Банка скоро відкриється</a>
-      <button class="btn ghost" id="shareBtn">Поділитися збором</button>
+    <span class="kicker" data-hero><span class="dot"></span> ПЛАСТ · КВТ 30 · ЗБІР НА ДРОНИ</span>
+    <h1><span class="ln" data-hero>Кожна гривня —</span><span class="ln" data-hero>крило в небі.</span></h1>
+    <p class="sub" data-hero>Збираємо разом із благодійним фондом «Алярм» на FPV-дрони для Сил Оборони. Те, що тримає небо, починається з твого донату.</p>
+    <div class="cta-row" data-hero>
+      <a class="btn primary" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">ПІДТРИМАТИ ЗБІР →</a>
+      <a class="btn ghost" href="#goal">Скільки вже зібрано</a>
     </div>
   </div>
 </header>
 
-<section id="progress">
+<section id="why">
   <div class="wrap">
-    <p class="eyebrow rv">Прогрес</p>
-    <h2 class="rv" style="--d:.06s">Ціль збору</h2>
-    <div class="progress-card rv" style="--d:.12s" id="progressCard">
-      <div class="amounts">
-        <span class="got" id="raised">0 грн</span>
-        <span class="goal">з <b id="goal"></b> · <span id="pct">0%</span></span>
+    <p class="eyebrow rv">Чому саме дрони</p>
+    <h2 class="rv">FPV — це очі й кулак піхоти</h2>
+    <p class="lead rv">Один недорогий дрон рятує життя цілого підрозділу й виконує роботу, яка раніше коштувала тонн боєприпасів. Це найефективніша гривня на фронті.</p>
+    <div class="facts">
+      <div class="fact rv"><div class="big">×1</div><p>Один FPV здатен зупинити одиницю важкої техніки ворога вартістю в мільйони.</p></div>
+      <div class="fact rv"><div class="big">7"</div><p>Дрон-камікадзе б'є на кілька кілометрів — розвідка й удар без ризику для бійців.</p></div>
+      <div class="fact rv"><div class="big">24/7</div><p>«Алярм» — пластуни-волонтери, що з 2022 року оперативно закривають потреби Сил Оборони.</p></div>
+      <div class="fact rv"><div class="big">100%</div><p>Усе до копійки — на залізо. Банка офіційна, рух коштів прозорий, звіт публічний.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drone-sec" id="drone">
+  <div class="wrap">
+    <p class="eyebrow rv" style="justify-content:center">Об'єкт збору</p>
+    <h2 class="rv">7-дюймовий FPV, який ти наближаєш</h2>
+    <p class="lead rv" style="margin:0 auto">Карбонова рама, мотори з мідними обмотками, FPV-камера, політний стек. Саме таке залізо летить на фронт за твій донат.</p>
+    <div class="drone-stage rv">
+      <video id="droneVid" autoplay muted loop playsinline poster="drone-render.png" aria-hidden="true">
+        <source src="drone-explode.mp4" type="video/mp4">
+      </video>
+      <div class="scan"></div>
+      <span class="lbl">FPV · 7IN · CARBON · LIVE BUILD</span>
+    </div>
+  </div>
+</section>
+
+<section id="goal">
+  <div class="wrap">
+    <p class="eyebrow rv">Ціль збору</p>
+    <h2 class="rv">Прогрес у реальному часі</h2>
+    <p class="lead rv">Мета — назбирати на партію дронів. Стеж за прогресом і допомагай довести лічильник до кінця.</p>
+    <div class="goal-card">
+      <div class="goal-top">
+        <span class="goal-raised" id="raised">0 ₴</span>
+        <span class="goal-of">ціль <b id="goalTxt">25 000 ₴</b> · <span id="pct">0%</span></span>
       </div>
-      <div class="bar"><i id="fill"></i></div>
-      <div class="bar-note"><span>оновлюю щодня</span><span id="donors"></span></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="goal-foot"><span>// ОНОВЛЮЄТЬСЯ ЩОДНЯ</span><span id="donors">збір триває</span></div>
     </div>
   </div>
 </section>
 
-<section>
+<section id="use">
   <div class="wrap">
-    <p class="eyebrow rv">Куди йдуть гроші</p>
-    <h2 class="rv" style="--d:.06s">Спільна ціль таборів — 3 000 000 грн</h2>
-    <p class="lead rv" style="--d:.12s">Цей збір — частина великого збору разом із БФ «Алярм»: команда волонтерів, що з 2022 року закриває запити Сил Оборони. Все до копійки йде на:</p>
-    <div class="grid">
-      <div class="card rv" style="--d:.1s"><div class="n">01</div><h3>Автоматизація БпЛА</h3><p>Системи автоматизації польотів для 80-ї окремої десантно-штурмової бригади.</p></div>
-      <div class="card rv" style="--d:.2s"><div class="n">02</div><h3>Пікапи для ССО</h3><p>Машини для підрозділу Сил спеціальних операцій — мобільність, що рятує життя.</p></div>
-      <div class="card rv" style="--d:.3s"><div class="n">03</div><h3>100 дронів — 59 ОШБр</h3><p>1 млн грн майстерні Drone Up на модернізацію сотні дронів для «Хижаків висот».</p></div>
+    <p class="eyebrow rv">Куди підуть кошти</p>
+    <h2 class="rv">Прозоро, до гривні</h2>
+    <div class="use-grid">
+      <div class="use rv"><div class="n">01 / БпЛА</div><h3>Дрони та комплектуючі</h3><p>FPV-рами, мотори, камери, батареї — готові до польоту апарати.</p></div>
+      <div class="use rv"><div class="n">02 / АВТОМАТИЗАЦІЯ</div><h3>Системи для 80 ОДШБр</h3><p>Автоматизація польотів БпЛА для десантно-штурмової бригади.</p></div>
+      <div class="use rv"><div class="n">03 / МОБІЛЬНІСТЬ</div><h3>Пікапи для ССО</h3><p>Транспорт для Сил спеціальних операцій — швидкість рятує життя.</p></div>
+      <div class="use rv"><div class="n">04 / МАЙСТЕРНЯ</div><h3>Модернізація дронів</h3><p>Drone Up — апгрейд сотні апаратів для «Хижаків висот» 59 ОШБр.</p></div>
     </div>
   </div>
 </section>
 
-<section class="fpv-sec" id="fpvSec">
-  <div class="fpv-glow"></div>
-  <div class="wrap fpv-wrap">
-    <p class="eyebrow rv">Той самий клас заліза</p>
-    <h2 class="rv" style="--d:.06s">7-дюймовий FPV — ось що тримає небо</h2>
-    <p class="lead rv" style="--d:.12s">Карбонова рама, мотори з мідними обмотками, FPV-камера, SpeedyBee-стек. Саме на таке залізо йдуть твої донати — кожна гривня наближає ще один такий дрон до фронту.</p>
-    <div class="fpv-frame rv" id="fpvFrame" style="--d:.18s">
-      <img src="drone-render.png" alt="7-дюймовий FPV-дрон: карбонова рама, мотори, FPV-камера" loading="lazy">
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap about">
-    <div>
-      <p class="eyebrow rv">Прозорість</p>
-      <h2 class="rv" style="--d:.06s">Чому збору можна довіряти</h2>
-      <p class="lead rv" style="--d:.12s">Збір проходить разом із благодійним фондом «Алярм» — командою, що з 2022 року офіційно забезпечує Сили Оборони України. Жодної копійки повз: банка офіційна, рух коштів прозорий, звіт публічний.</p>
-      <ul>
-        <li class="rv" style="--d:.18s">Партнер — верифікований БФ «Алярм» (@alarm_shtab)</li>
-        <li class="rv" style="--d:.26s">Банка monobank — прозорий рух коштів у реальному часі</li>
-        <li class="rv" style="--d:.34s">Залізо йде конкретним підрозділам: 80 ОДШБр, ССО, 59 ОШБр</li>
-        <li class="rv" style="--d:.42s">Публічний звіт після завершення збору</li>
-      </ul>
-    </div>
-    <div class="ph" id="aboutPh"><span>дизайн збору від «Алярму» з'явиться тут</span></div>
-  </div>
-</section>
-
-<section class="help" id="help">
+<section class="donate" id="donate">
   <div class="wrap">
-    <p class="eyebrow rv">Як допомогти</p>
-    <h2 class="rv" style="--d:.06s">Два способи, обидва працюють</h2>
-    <div class="grid">
-      <div class="card rv" style="--d:.1s"><strong>1 — Донат</strong><p>Будь-яка сума. 20 грн від двадцяти людей — це вже 400. Кнопка зверху або QR нижче.</p></div>
-      <div class="card rv" style="--d:.2s"><strong>2 — Репост</strong><p>Кинь цю сторінку у свої сторіс чи чат. Репост безкоштовний, а приводить тих, хто задонатить.</p></div>
-    </div>
-    <div class="qr-box qr-hidden" id="qrBox">
-      <img id="qrImg" alt="QR-код банки monobank">
-      <p class="lead">Наведи камеру — відкриється банка monobank.</p>
+    <p class="eyebrow rv" style="justify-content:center">Долучитися</p>
+    <h2 class="rv">Задонать — посилання в банці</h2>
+    <p class="lead rv">Будь-яка сума наближає ціль. Не можеш донатити — поділись цією сторінкою, репост безкоштовний, а працює.</p>
+    <div class="donate-box">
+      <div class="qr rv"><img id="qrImg" alt="QR-код банки monobank" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=0&data=https%3A%2F%2Fsend.monobank.ua%2Fjar%2F35k1vso2gM"></div>
+      <div class="donate-info rv">
+        <a class="btn primary big-btn" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">ВІДКРИТИ БАНКУ →</a>
+        <div class="jarline">monobank jar<br><b>send.monobank.ua/jar/35k1vso2gM</b></div>
+      </div>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <span>Благодійний збір на дрони для Сил Оборони · v4</span>
-    <span>Партнер збору: БФ «Алярм» · @alarm_shtab</span>
+    <div class="slava">Слава Україні! 🇺🇦</div>
+    <div class="meta">
+      ПЛАСТ · КРАЙОВИЙ ВИШКІЛЬНИЙ ТАБІР 30<br>
+      Партнер збору: БФ «Алярм» · <a href="https://instagram.com/alarm_shtab" target="_blank" rel="noopener">@alarm_shtab</a>
+    </div>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-const GOAL = 2000;
-const RAISED = 0;
-const DONORS = 0;
-const BANKA_URL = "";
+// === config (real data) ===
+const GOAL = 25000;        // ціль збору, ₴
+const RAISED = 0;          // зібрано — оновлюй це число вручну за банкою
+const fmt = n => Math.round(n).toLocaleString("uk-UA") + " ₴";
+const pct = Math.min(100, Math.round(RAISED / GOAL * 100));
+document.getElementById("goalTxt").textContent = fmt(GOAL);
+
+// nav scroll
+const navEl = document.getElementById("nav");
+addEventListener("scroll", () => navEl.classList.toggle("scrolled", scrollY > 60), {passive:true});
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (reduced){ const hv = document.getElementById("heroVid"); if (hv){ hv.removeAttribute("autoplay"); hv.pause(); } }
+if (reduced){ const v = document.getElementById("heroVid"); if (v){ v.removeAttribute("autoplay"); v.pause(); } }
 
-const navEl = document.getElementById("nav");
-addEventListener("scroll", () => navEl.classList.toggle("scrolled", scrollY > 60), {passive: true});
-const fmt = n => Math.round(n).toLocaleString("uk-UA") + " грн";
-const pctOf = n => Math.min(100, Math.round(n / GOAL * 100));
-document.getElementById("goal").textContent = fmt(GOAL);
+if (window.gsap){
+  gsap.registerPlugin(ScrollTrigger);
 
-const raisedEl = document.getElementById("raised");
-const pctEl = document.getElementById("pct");
-const fillEl = document.getElementById("fill");
-document.getElementById("donors").textContent = DONORS ? DONORS + " донатів" : "";
+  gsap.matchMedia().add({
+    motion: "(prefers-reduced-motion: no-preference)",
+    reduce: "(prefers-reduced-motion: reduce)"
+  }, (ctx) => {
+    const {motion} = ctx.conditions;
 
-let counted = false;
-function runCounter(){
-  if (counted) return; counted = true;
-  const pct = pctOf(RAISED);
-  if (reduced || RAISED === 0){
-    raisedEl.textContent = fmt(RAISED);
-    pctEl.textContent = pct + "%";
-    fillEl.style.transform = "scaleX(" + pct / 100 + ")";
-    return;
-  }
-  fillEl.style.transform = "scaleX(" + pct / 100 + ")";
-  const t0 = performance.now(), dur = 1400;
-  const tick = now => {
-    const p = Math.min(1, (now - t0) / dur);
-    const e = 1 - Math.pow(1 - p, 3);
-    raisedEl.textContent = fmt(RAISED * e);
-    pctEl.textContent = Math.round(pct * e) + "%";
-    if (p < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
-
-const aboutSec = document.querySelector(".about");
-const aboutPh = document.getElementById("aboutPh");
-const io = new IntersectionObserver(entries => {
-  for (const en of entries){
-    if (!en.isIntersecting) continue;
-    if (en.target === aboutSec) aboutPh.classList.add("in");
-    else en.target.classList.add("in");
-    if (en.target.id === "progressCard") runCounter();
-    io.unobserve(en.target);
-  }
-}, {threshold: .18, rootMargin: "0px 0px -40px 0px"});
-document.querySelectorAll(".rv").forEach(el => io.observe(el));
-io.observe(aboutSec);
-if (reduced) runCounter();
-
-const bg = document.querySelector(".hero-bg");
-const heroEl = document.querySelector(".hero");
-const glc = document.getElementById("gl");
-const cam = {sy: 0, tx: 0, ty: 0, rx: 0, ry: 0};
-function composeHero(){
-  if (!bg) return;
-  cam.rx += (cam.tx - cam.rx) * .07;
-  cam.ry += (cam.ty - cam.ry) * .07;
-  const t = "translateY(" + (cam.sy * .18).toFixed(1) + "px) scale(" +
-    (1.04 + cam.sy * .00006).toFixed(4) + ") rotateX(" + cam.ry.toFixed(3) + "deg) rotateY(" + cam.rx.toFixed(3) + "deg)";
-  bg.style.transform = t;
-  if (glc) glc.style.transform = t;
-}
-if (!reduced && bg){
-  addEventListener("scroll", () => { cam.sy = Math.min(innerHeight, scrollY); }, {passive: true});
-  if (matchMedia("(pointer:fine)").matches){
-    heroEl.addEventListener("pointermove", e => {
-      cam.tx = ((e.clientX / innerWidth) - .5) * 7;
-      cam.ty = ((e.clientY / innerHeight) - .5) * -5.5;
-    });
-    heroEl.addEventListener("pointerleave", () => { cam.tx = 0; cam.ty = 0; });
-  }
-  if (matchMedia("(pointer:coarse)").matches && "DeviceOrientationEvent" in window){
-    const onTilt = e => {
-      if (e.gamma == null) return;
-      cam.tx = Math.max(-8, Math.min(8, e.gamma / 4));
-      cam.ty = Math.max(-6, Math.min(6, (e.beta - 45) / -6));
-    };
-    if (typeof DeviceOrientationEvent.requestPermission === "function"){
-      heroEl.addEventListener("click", () => {
-        DeviceOrientationEvent.requestPermission()
-          .then(s => { if (s === "granted") addEventListener("deviceorientation", onTilt); })
-          .catch(() => {});
-      }, {once: true});
-    } else {
-      addEventListener("deviceorientation", onTilt);
+    // hero stagger
+    if (motion){
+      gsap.from("[data-hero]", {y:26, opacity:0, filter:"blur(8px)", duration:.9, stagger:.12, ease:"power3.out", delay:.2});
     }
-  }
-}
 
-const saveData = navigator.connection && navigator.connection.saveData;
-const embers = document.getElementById("embers");
-if (!reduced && !saveData && embers){
-  const ctx = embers.getContext("2d");
-  const hero = document.querySelector(".hero");
-  let W, H, parts = [], running = false;
-  const N = () => innerWidth < 760 ? 26 : 56;
-  function size(){
-    W = embers.width = hero.clientWidth;
-    H = embers.height = hero.clientHeight;
-  }
-  function spawn(p){
-    p.z = .35 + Math.random() * .65;
-    p.x = Math.random() * W;
-    p.y = H * (.55 + Math.random() * .45);
-    p.r = (.8 + Math.random() * 2.2) * p.z;
-    p.vy = (.25 + Math.random() * .8) * p.z;
-    p.vx = (Math.random() - .5) * .3 * p.z;
-    p.life = 0;
-    p.max = 240 + Math.random() * 240;
-    p.ph = Math.random() * Math.PI * 2;
-    return p;
-  }
-  function loop(){
-    if (!running) return;
-    composeHero();
-    if (drawGL) drawGL(performance.now() / 1000);
-    ctx.clearRect(0, 0, W, H);
-    for (const p of parts){
-      p.life++;
-      p.y -= p.vy;
-      p.x += p.vx + Math.sin(p.life / 40 + p.ph) * .35 * p.z + cam.rx * p.z * .4;
-      if (p.life > p.max || p.y < -10) spawn(p);
-      const t = p.life / p.max;
-      const a = t < .15 ? t / .15 : 1 - (t - .15) / .85;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, 7);
-      ctx.fillStyle = "rgba(242,163,60," + (a * .8 * p.z).toFixed(3) + ")";
-      ctx.shadowColor = "#e0701f";
-      ctx.shadowBlur = 10 * p.z;
-      ctx.fill();
-    }
-    requestAnimationFrame(loop);
-  }
-  function start(){ if (running) return; running = true; requestAnimationFrame(loop); }
-  function stop(){ running = false; }
-  size();
-  parts = Array.from({length: N()}, () => spawn({}));
-  addEventListener("resize", size);
-  document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
-  const heroIO = new IntersectionObserver(en => en[0].isIntersecting ? start() : stop());
-  heroIO.observe(hero);
-}
-
-const pointer = {x: .5, y: .35, px: .5, py: .35, vx: 0, vy: 0};
-let drawGL = null;
-if (!reduced && !saveData && glc && bg){
-  try {
-    const gl = glc.getContext("webgl", {antialias: false, alpha: false});
-    if (!gl) throw new Error("no webgl");
-    const compile = (type, src) => {
-      const sh = gl.createShader(type);
-      gl.shaderSource(sh, src); gl.compileShader(sh);
-      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
-      return sh;
-    };
-    const vs = compile(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}");
-    const fs = compile(gl.FRAGMENT_SHADER,
-      "precision mediump float;" +
-      "uniform sampler2D u_tex;uniform vec2 u_res,u_texres,u_mouse,u_vel;uniform float u_t;" +
-      "void main(){" +
-      "vec2 frag=gl_FragCoord.xy/u_res;" +
-      "float ca=u_res.x/u_res.y,ta=u_texres.x/u_texres.y;" +
-      "vec2 uv=frag;" +
-      "if(ca>ta){uv.y=(frag.y-.5)*(ta/ca)+.5;}else{uv.x=(frag.x-.5)*(ca/ta)+.5;}" +
-      "float heat=1.-smoothstep(0.,.55,uv.y);" +
-      "vec2 wave=vec2(sin(uv.y*70.+u_t*1.6)+sin(uv.y*23.-u_t*.7),cos(uv.x*60.-u_t*1.2))*vec2(.0028,.0016)*heat;" +
-      "vec2 m=uv-u_mouse;m.x*=ca;" +
-      "float d=length(m);" +
-      "float rip=exp(-d*9.);" +
-      "float v=min(length(u_vel)*38.,1.);" +
-      "wave+=(m/max(d,.001))*rip*.04*v;" +
-      "vec2 suv=uv+wave;" +
-      "vec3 col=texture2D(u_tex,vec2(suv.x,1.-suv.y)).rgb;" +
-      "col+=vec3(1.,.62,.25)*rip*.16*v;" +
-      "gl_FragColor=vec4(col,1.);}");
-    const prog = gl.createProgram();
-    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error("link fail");
-    gl.useProgram(prog);
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, "a");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const U = n => gl.getUniformLocation(prog, n);
-    const uRes = U("u_res"), uTexres = U("u_texres"), uMouse = U("u_mouse"), uVel = U("u_vel"), uT = U("u_t");
-    const tex = gl.createTexture();
-    let texReady = false;
-    fetch("hero.png")
-      .then(r => r.blob())
-      .then(b => createImageBitmap(b))
-      .then(bm => {
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, bm);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.uniform2f(uTexres, bm.width, bm.height);
-        texReady = true;
-      })
-      .catch(() => { glc.remove(); drawGL = null; });
-    heroEl.addEventListener("pointermove", e => {
-      const r = heroEl.getBoundingClientRect();
-      pointer.x = (e.clientX - r.left) / r.width;
-      pointer.y = 1 - (e.clientY - r.top) / r.height;
-    }, {passive: true});
-    drawGL = t => {
-      if (!texReady) return;
-      if (glc.width !== glc.clientWidth || glc.height !== glc.clientHeight){
-        glc.width = glc.clientWidth; glc.height = glc.clientHeight;
-        gl.viewport(0, 0, glc.width, glc.height);
-      }
-      pointer.vx += ((pointer.x - pointer.px) - pointer.vx) * .12;
-      pointer.vy += ((pointer.y - pointer.py) - pointer.vy) * .12;
-      pointer.px += (pointer.x - pointer.px) * .18;
-      pointer.py += (pointer.y - pointer.py) * .18;
-      gl.uniform2f(uRes, glc.width, glc.height);
-      gl.uniform2f(uMouse, pointer.px, pointer.py);
-      gl.uniform2f(uVel, pointer.vx, pointer.vy);
-      gl.uniform1f(uT, t);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    };
-  } catch (err) {
-    glc.remove();
-    drawGL = null;
-  }
-}
-
-if (!reduced && matchMedia("(pointer:fine)").matches){
-  document.querySelectorAll(".card").forEach(card => {
-    card.addEventListener("pointermove", e => {
-      const r = card.getBoundingClientRect();
-      const rx = ((e.clientY - r.top) / r.height - .5) * -9;
-      const ry = ((e.clientX - r.left) / r.width - .5) * 9;
-      card.style.transition = "transform .08s linear";
-      card.style.transform = "perspective(800px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg) translateY(-4px)";
-      card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
-      card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
+    // section reveals
+    gsap.utils.toArray(".rv").forEach(el => {
+      gsap.from(el, {
+        y: motion ? 30 : 0, opacity:0, duration:.8, ease:"power2.out",
+        scrollTrigger:{trigger:el, start:"top 85%", toggleActions:"play none none reverse", markers:false}
+      });
     });
-    card.addEventListener("pointerleave", () => {
-      card.style.transition = "";
-      card.style.transform = "";
+
+    // counter + progress bar (scrub)
+    const raisedEl = document.getElementById("raised");
+    const pctEl = document.getElementById("pct");
+    const obj = {v:0};
+    ScrollTrigger.create({
+      trigger:"#goal", start:"top 70%", markers:false,
+      onEnter: () => {
+        gsap.to(obj, {v:RAISED, duration:1.6, ease:"power2.out", onUpdate:()=>{ raisedEl.textContent = fmt(obj.v); }});
+        gsap.to({p:0}, {p:pct, duration:1.6, ease:"power2.out", onUpdate:function(){ pctEl.textContent = Math.round(this.targets()[0].p)+"%"; }});
+      },
+      once:true
+    });
+    gsap.to("#fill", {
+      scaleX: pct/100, ease:"none",
+      scrollTrigger:{trigger:"#goal", start:"top 75%", end:"top 30%", scrub:true, markers:false}
     });
   });
 }
-
-if (BANKA_URL) {
-  const b = document.getElementById("donateBtn");
-  b.textContent = "Задонатити в банку";
-  b.href = BANKA_URL;
-  b.removeAttribute("aria-disabled");
-  document.getElementById("qrBox").classList.remove("qr-hidden");
-  document.getElementById("qrImg").src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(BANKA_URL);
-  const nd = document.getElementById("navDonate");
-  nd.href = BANKA_URL; nd.target = "_blank"; nd.rel = "noopener";
-}
-
-const fpvFrame = document.getElementById("fpvFrame");
-if (fpvFrame && !reduced && matchMedia("(pointer:fine)").matches){
-  const fsec = document.getElementById("fpvSec");
-  fsec.addEventListener("pointermove", e => {
-    const r = fpvFrame.getBoundingClientRect();
-    const rx = ((e.clientY - r.top) / r.height - .5) * -4.5;
-    const ry = ((e.clientX - r.left) / r.width - .5) * 4.5;
-    fpvFrame.style.transform = "perspective(1100px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg)";
-  });
-  fsec.addEventListener("pointerleave", () => { fpvFrame.style.transform = ""; });
-}
-
-document.getElementById("shareBtn").addEventListener("click", async () => {
-  const data = { title: document.title, url: location.href };
-  if (navigator.share) { try { await navigator.share(data); } catch {} }
-  else {
-    await navigator.clipboard.writeText(location.href);
-    const btn = document.getElementById("shareBtn");
-    btn.textContent = "Посилання скопійовано ✓";
-    setTimeout(() => btn.textContent = "Поділитися збором", 2200);
-  }
-});
 </script>
 </body>
 </html>
