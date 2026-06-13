@@ -34,6 +34,20 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--flame);outline-offset:3px;border-radius:6px}
 .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
 
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid transparent;
+  transition:background .3s var(--ez),border-color .3s var(--ez)}
+.nav.scrolled{background:rgba(12,14,17,.82);backdrop-filter:blur(14px);border-color:var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo{font:700 16px Unbounded;letter-spacing:.01em}
+.logo b{color:var(--flame)}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font:600 14px Inter;color:var(--mut);text-decoration:none;transition:color .2s var(--ez)}
+.nav-links a:hover{color:var(--txt)}
+.nav-cta{padding:9px 18px;border-radius:11px;background:linear-gradient(135deg,var(--flame),var(--flame2));
+  color:#1a1205!important;transition:transform .2s var(--ez),box-shadow .2s var(--ez)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(240,160,60,.28)}
+@media(max-width:600px){.nav-links a:not(.nav-cta){display:none}}
+
 .hero{position:relative;min-height:92svh;display:flex;align-items:flex-end;overflow:hidden}
 .hero-bg{position:absolute;top:-12%;left:0;width:100%;height:124%;object-fit:cover;
   will-change:transform;animation:settle 2.4s var(--ez) backwards}
@@ -151,6 +165,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 </head>
 <body>
 
+<nav class="nav" id="nav">
+  <div class="wrap nav-in">
+    <span class="logo">Збір&nbsp;×&nbsp;<b>Алярм</b></span>
+    <div class="nav-links">
+      <a href="#progress">Прогрес</a>
+      <a href="#help">Як допомогти</a>
+      <a class="nav-cta" href="#help" id="navDonate">Задонатити</a>
+    </div>
+  </div>
+</nav>
+
 <header class="hero">
   <video class="hero-bg" id="heroVid" autoplay muted loop playsinline poster="hero.png" aria-hidden="true">
     <source src="hero.mp4" type="video/mp4">
@@ -167,7 +192,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
   </div>
 </header>
 
-<section>
+<section id="progress">
   <div class="wrap">
     <p class="eyebrow rv">Прогрес</p>
     <h2 class="rv" style="--d:.06s">Ціль збору</h2>
@@ -224,7 +249,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
   </div>
 </section>
 
-<section class="help">
+<section class="help" id="help">
   <div class="wrap">
     <p class="eyebrow rv">Як допомогти</p>
     <h2 class="rv" style="--d:.06s">Два способи, обидва працюють</h2>
@@ -254,6 +279,9 @@ const BANKA_URL = "";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 if (reduced){ const hv = document.getElementById("heroVid"); if (hv){ hv.removeAttribute("autoplay"); hv.pause(); } }
+
+const navEl = document.getElementById("nav");
+addEventListener("scroll", () => navEl.classList.toggle("scrolled", scrollY > 60), {passive: true});
 const fmt = n => Math.round(n).toLocaleString("uk-UA") + " грн";
 const pctOf = n => Math.min(100, Math.round(n / GOAL * 100));
 document.getElementById("goal").textContent = fmt(GOAL);
@@ -506,6 +534,8 @@ if (BANKA_URL) {
   document.getElementById("qrBox").classList.remove("qr-hidden");
   document.getElementById("qrImg").src =
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(BANKA_URL);
+  const nd = document.getElementById("navDonate");
+  nd.href = BANKA_URL; nd.target = "_blank"; nd.rel = "noopener";
 }
 
 const fpvFrame = document.getElementById("fpvFrame");
