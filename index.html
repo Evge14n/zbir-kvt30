@@ -1,341 +1,470 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Збір на FPV-дрони для ЗСУ · Пласт × БФ «Алярм»</title>
-<meta name="description" content="Благодійний збір на FPV-дрони для Сил Оборони разом із фондом «Алярм». Кожна гривня — крило в небі. Підтримай.">
-<meta property="og:title" content="Збір на FPV-дрони для ЗСУ — підтримай">
-<meta property="og:description" content="Кожна гривня стає дроном на фронті. Донат у банку monobank або репост.">
-<meta property="og:image" content="https://evge14n.github.io/zbir-kvt30/drone-render.png">
-<meta property="og:url" content="https://evge14n.github.io/zbir-kvt30/">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛰️</text></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>НЕБО ТРИМАЄ ОБОРОНУ — збір на FPV-дрони для Сил Оборони · Пласт × БФ «Алярм»</title>
+<meta name="description" content="Кожна гривня — крило в небі. Збір на FPV-дрони для Сил Оборони України разом із БФ «Алярм».">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07090c; --bg2:#0b0f14; --panel:#0e131a; --line:#1b2530;
-  --txt:#e9edf2; --mut:#8b95a3;
-  --yellow:#ffd60a; --yellow2:#f4c40a;
-  --hud:#5aa9ff; --hud-dim:rgba(90,169,255,.4);
-  --ez:cubic-bezier(.22,1,.36,1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font:400 17px/1.6 Manrope,system-ui,sans-serif;overflow-x:hidden}
-h1,h2,h3{font-family:Unbounded,sans-serif;line-height:1.1;font-weight:800}
-a{color:inherit;text-decoration:none}
-.mono{font-family:"JetBrains Mono",monospace}
-::selection{background:var(--yellow);color:#1a1400}
-:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  :root{
+    --bg:#060708; --bg-soft:#0c0e12; --ink:#F3F1EA; --muted:#828893;
+    --signal:#FFD400; --cold:#5B83FF; --line:rgba(255,255,255,.09);
+    --maxw:1280px; --pad:clamp(20px,5vw,72px);
+    --display:'Unbounded',sans-serif; --body:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--body);
+    font-weight:400; line-height:1.55; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+  body.is-loading{overflow:hidden;height:100vh}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--signal);color:#000}
+  canvas#bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  /* atmosphere overlays */
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 18%,transparent 40%,rgba(0,0,0,.55) 100%),
+               linear-gradient(180deg,rgba(6,7,8,.65) 0%,transparent 22%,transparent 72%,rgba(6,7,8,.92) 100%)}
+  .grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 7s steps(6) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}50%{transform:translate(-3%,2%)}100%{transform:translate(2%,-2%)}}
+  .content{position:relative;z-index:3}
 
-/* grain + scanlines global overlay */
-body::before{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.5;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
-body::after{content:"";position:fixed;inset:0;z-index:101;pointer-events:none;opacity:.35;
-  background:repeating-linear-gradient(180deg,transparent 0 2px,rgba(0,0,0,.5) 2px 3px)}
+  /* loader */
+  #loader{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+  #loader .lt{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase}
+  #loader .lbar{width:160px;height:2px;background:var(--line);overflow:hidden}
+  #loader .lbar i{display:block;height:100%;width:0;background:var(--signal)}
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:30;border-bottom:1px solid transparent;transition:background .3s var(--ez),border-color .3s var(--ez)}
-.nav.scrolled{background:rgba(7,9,12,.85);backdrop-filter:blur(14px);border-color:var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font:700 13px/1 "JetBrains Mono",monospace;letter-spacing:.18em;text-transform:uppercase}
-.logo b{color:var(--hud)}
-.nav-cta{padding:9px 18px;border-radius:8px;background:var(--yellow);color:#1a1400;font:700 13px Manrope;
-  letter-spacing:.03em;transition:transform .2s var(--ez),box-shadow .2s var(--ez)}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(255,214,10,.3)}
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+    padding:22px var(--pad);mix-blend-mode:difference}
+  nav .brand{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff}
+  nav .brand b{color:var(--signal)}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    padding:11px 20px;border-radius:2px;transition:transform .25s,background .25s,color .25s;cursor:pointer;border:1px solid transparent}
+  .btn-y{background:var(--signal);color:#000;font-weight:600}
+  .btn-y:hover{transform:translateY(-2px)}
+  .btn-ghost{border:1px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink)}
 
-/* HERO */
-.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
-.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
-.hero::after{content:"";position:absolute;inset:0;background:
-  radial-gradient(120% 80% at 50% 30%,transparent 30%,rgba(7,9,12,.7) 100%),
-  linear-gradient(180deg,rgba(7,9,12,.55),rgba(7,9,12,.35) 40%,var(--bg) 100%)}
-.hud{position:absolute;inset:0;z-index:2;pointer-events:none}
-.hud .corner{position:absolute;width:46px;height:46px;border:2px solid var(--hud-dim)}
-.hud .tl{top:78px;left:22px;border-right:0;border-bottom:0}
-.hud .tr{top:78px;right:22px;border-left:0;border-bottom:0}
-.hud .bl{bottom:30px;left:22px;border-right:0;border-top:0}
-.hud .br{bottom:30px;right:22px;border-left:0;border-top:0}
-.hud .reticle{position:absolute;top:50%;left:50%;width:64px;height:64px;transform:translate(-50%,-50%);opacity:.5}
-.hud .reticle::before,.hud .reticle::after{content:"";position:absolute;background:var(--hud-dim)}
-.hud .reticle::before{top:50%;left:0;right:0;height:1px}
-.hud .reticle::after{left:50%;top:0;bottom:0;width:1px}
-.hud .ring{position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%);
-  border:1px solid var(--hud-dim);border-radius:50%}
-.tele{position:absolute;z-index:2;font:500 11.5px/1.7 "JetBrains Mono",monospace;color:var(--hud);letter-spacing:.05em;opacity:.85}
-.tele.lt{top:84px;left:34px}
-.tele.rt{top:84px;right:34px;text-align:right}
-.tele .rec{color:#ff4d4d}
-.tele .blink{animation:blink 1.2s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.hero .wrap{position:relative;z-index:3;width:100%}
-.kicker{display:inline-flex;align-items:center;gap:10px;font:600 12px/1 "JetBrains Mono",monospace;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--hud);
-  border:1px solid var(--hud-dim);padding:8px 14px;border-radius:999px;margin-bottom:22px}
-.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
-.hero h1{font-size:clamp(34px,6.4vw,76px);font-weight:900;max-width:15ch;letter-spacing:-.01em}
-.hero h1 .ln{display:block;overflow:hidden}
-.hero p.sub{margin:22px 0 32px;color:#c3cbd5;max-width:50ch;font-size:clamp(16px,2vw,19px)}
-.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:10px;border-radius:11px;padding:17px 30px;
-  font:700 16px Manrope;cursor:pointer;border:1px solid var(--line);transition:transform .2s var(--ez),box-shadow .2s var(--ez),border-color .2s var(--ez)}
-.btn:active{transform:scale(.97)}
-.btn.primary{background:var(--yellow);color:#1a1400;border:none;letter-spacing:.02em}
-.btn.primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(255,214,10,.32)}
-.btn.ghost{background:rgba(14,19,26,.6);color:var(--txt);backdrop-filter:blur(6px)}
-.btn.ghost:hover{border-color:var(--hud)}
+  section{position:relative;padding:0 var(--pad)}
+  .wrap{max-width:var(--maxw);margin:0 auto;width:100%}
+  .kick{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cold);
+    display:inline-flex;align-items:center;gap:10px}
+  .kick::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:0 0 12px var(--signal)}
 
-section{padding:96px 0;position:relative}
-.eyebrow{font:600 12px/1 "JetBrains Mono",monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--hud);margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.eyebrow::before{content:"";width:26px;height:1px;background:var(--hud-dim)}
-h2{font-size:clamp(26px,4vw,42px);margin-bottom:20px;letter-spacing:-.01em}
-.lead{color:var(--mut);max-width:60ch;font-size:18px}
+  /* HERO */
+  .hero{height:100vh;display:flex;align-items:center}
+  .hero .wrap{max-width:1180px}
+  .hero h1{font-family:var(--display);font-weight:900;line-height:.92;letter-spacing:-.02em;
+    font-size:clamp(46px,11vw,168px);text-transform:uppercase;margin:24px 0 0}
+  .hero h1 .ln{display:block;overflow:hidden}
+  .hero h1 .ln span{display:inline-block;will-change:transform}
+  .hero h1 .em{
+    background:linear-gradient(180deg,#fff 0%,#cdd2db 48%,#7d8392 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .sub{max-width:540px;margin-top:30px;color:#c8ccd3;font-size:clamp(15px,1.5vw,19px);line-height:1.6}
+  .hero .cta{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap}
+  .hero .cta .btn{padding:15px 26px;font-size:13px}
+  .scrollhint{position:absolute;bottom:30px;left:var(--pad);font-family:var(--mono);font-size:10px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .scrollhint .ln2{width:46px;height:1px;background:var(--muted);transform-origin:left;animation:sweep 2.4s ease-in-out infinite}
+  @keyframes sweep{0%,100%{transform:scaleX(.2);opacity:.4}50%{transform:scaleX(1);opacity:1}}
 
-/* WHY facts */
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:40px}
-.fact{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:linear-gradient(180deg,var(--panel),var(--bg2));position:relative;overflow:hidden}
-.fact::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--hud),transparent)}
-.fact .big{font:800 40px/1 Unbounded;color:var(--yellow);margin-bottom:10px}
-.fact p{color:var(--mut);font-size:15.5px}
+  /* HUD telemetry */
+  .hud{position:fixed;z-index:10;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--cold);
+    pointer-events:none;text-shadow:0 0 10px rgba(91,131,255,.4);opacity:0}
+  .hud.tl{top:84px;left:var(--pad)} .hud.tr{top:84px;right:var(--pad);text-align:right}
+  .hud .row{opacity:.85;line-height:1.7}
+  .corner{position:fixed;z-index:10;width:34px;height:34px;border:1px solid rgba(91,131,255,.5);opacity:0;pointer-events:none}
+  .corner.tl{top:74px;left:calc(var(--pad) - 14px);border-right:0;border-bottom:0}
+  .corner.tr{top:74px;right:calc(var(--pad) - 14px);border-left:0;border-bottom:0}
+  .corner.bl{bottom:24px;left:calc(var(--pad) - 14px);border-right:0;border-top:0}
+  .corner.br{bottom:24px;right:calc(var(--pad) - 14px);border-left:0;border-top:0}
+  .reticle{position:fixed;z-index:9;top:50%;left:50%;width:120px;height:120px;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
+  .reticle::before,.reticle::after{content:"";position:absolute;background:rgba(91,131,255,.35)}
+  .reticle::before{top:50%;left:0;right:0;height:1px} .reticle::after{left:50%;top:0;bottom:0;width:1px}
+  .reticle i{position:absolute;inset:34px;border:1px solid rgba(91,131,255,.45);border-radius:50%}
 
-/* DRONE showcase */
-.drone-sec{text-align:center;overflow:hidden}
-.drone-stage{position:relative;max-width:880px;margin:36px auto 0;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#04060a}
-.drone-stage video,.drone-stage img{width:100%;display:block}
-.drone-stage .scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(90,169,255,.04) 3px 4px)}
-.drone-stage .lbl{position:absolute;left:16px;bottom:14px;font:500 11px "JetBrains Mono",monospace;color:var(--hud);letter-spacing:.08em;background:rgba(7,9,12,.6);padding:5px 10px;border-radius:7px;border:1px solid var(--hud-dim)}
+  /* MANIFESTO */
+  .manifesto{padding-top:24vh;padding-bottom:24vh}
+  .manifesto .wrap{max-width:1100px}
+  .manifesto .line{font-family:var(--display);font-weight:700;letter-spacing:-.015em;line-height:1.04;
+    font-size:clamp(28px,5.4vw,76px);margin:0 0 .25em;color:#3a3f49}
+  .manifesto .line .w{color:var(--ink)}
+  .manifesto .line .y{color:var(--signal)}
+  .manifesto .note{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);
+    text-transform:uppercase;margin-top:40px;max-width:520px;line-height:1.9}
 
-/* GOAL */
-.goal-card{margin-top:40px;border:1px solid var(--line);border-radius:22px;padding:38px 32px;background:linear-gradient(180deg,var(--panel),var(--bg2))}
-.goal-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:8px}
-.goal-raised{font:900 clamp(34px,6vw,60px)/1 Unbounded;color:var(--yellow);font-variant-numeric:tabular-nums}
-.goal-of{color:var(--mut);font:500 16px "JetBrains Mono",monospace}
-.goal-of b{color:var(--txt)}
-.track{height:18px;background:#04060a;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:18px 0 12px}
-.track .fill{height:100%;width:100%;transform-origin:left;transform:scaleX(0);border-radius:999px;
-  background:linear-gradient(90deg,var(--yellow2),var(--yellow));box-shadow:0 0 18px rgba(255,214,10,.4)}
-.goal-foot{display:flex;justify-content:space-between;color:var(--mut);font:500 13px "JetBrains Mono",monospace}
+  /* SEQ — scroll-scrub drone */
+  .seq{position:relative;height:300vh}
+  .seq-stick{position:sticky;top:0;height:100vh;overflow:hidden;background:#05060a}
+  #seqc{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .seq-stick::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 45%,transparent 40%,rgba(5,6,10,.7) 100%)}
+  .seq-overlay{position:absolute;left:var(--pad);bottom:11vh;z-index:2;max-width:720px}
+  .seq-overlay .seq-h{font-family:var(--display);font-weight:900;line-height:.94;letter-spacing:-.02em;
+    text-transform:uppercase;font-size:clamp(34px,7vw,104px);margin-top:16px}
+  .seq-overlay .seq-h .y{color:var(--signal)}
 
-/* USE cards */
-.use-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:40px}
-.use{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:var(--panel);transition:transform .25s var(--ez),border-color .25s var(--ez)}
-.use:hover{transform:translateY(-4px);border-color:var(--hud-dim)}
-.use .n{font:700 13px "JetBrains Mono",monospace;color:var(--hud);margin-bottom:14px;letter-spacing:.1em}
-.use h3{font-size:18px;margin-bottom:8px;font-family:Unbounded;font-weight:700}
-.use p{color:var(--mut);font-size:15px}
+  /* GOAL */
+  .goal{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  .goal .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--cold)}
+  .goal .num{font-family:var(--display);font-weight:900;font-size:clamp(64px,16vw,240px);line-height:1;letter-spacing:-.03em;margin:14px 0;
+    background:linear-gradient(180deg,#fff,#9aa0ab);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .goal .num small{font-size:.32em;-webkit-text-fill-color:var(--signal);color:var(--signal);vertical-align:.5em;margin-left:.15em}
+  .goal .track{width:min(640px,82vw);height:3px;background:var(--line);margin:30px auto 0;position:relative;overflow:hidden;border-radius:3px}
+  .goal .track i{position:absolute;inset:0;width:100%;background:linear-gradient(90deg,var(--cold),var(--signal));transform:scaleX(0);transform-origin:left}
+  .goal .meta{display:flex;gap:28px;justify-content:center;margin-top:22px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;flex-wrap:wrap}
+  .goal .meta b{color:var(--ink)}
 
-/* DONATE */
-.donate{text-align:center;background:linear-gradient(180deg,var(--bg),var(--bg2));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.donate h2{max-width:18ch;margin:0 auto 16px}
-.donate .lead{margin:0 auto 32px}
-.donate-box{display:flex;gap:34px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.qr{width:188px;height:188px;border-radius:16px;background:#fff;padding:12px;flex-shrink:0}
-.qr img{width:100%;height:100%;display:block}
-.donate-info{text-align:left;max-width:340px}
-.donate-info .big-btn{font-size:18px;padding:20px 34px;width:100%;justify-content:center;margin-bottom:14px}
-.donate-info .jarline{font:500 13px "JetBrains Mono",monospace;color:var(--mut);word-break:break-all}
-.donate-info .jarline b{color:var(--hud)}
+  /* ALLOC horizontal */
+  .alloc{overflow:hidden}
+  .alloc .track{display:flex;gap:28px;padding:0 var(--pad);width:max-content;align-items:stretch}
+  .alloc .head{min-width:min(78vw,440px);display:flex;flex-direction:column;justify-content:center}
+  .alloc .head h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,64px);line-height:1;letter-spacing:-.02em;text-transform:uppercase}
+  .alloc .head p{color:var(--muted);margin-top:18px;max-width:340px}
+  .card{min-width:min(72vw,380px);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+    border:1px solid var(--line);border-radius:4px;padding:34px 30px;display:flex;flex-direction:column;justify-content:space-between;min-height:60vh}
+  .card .n{font-family:var(--mono);font-size:12px;color:var(--cold);letter-spacing:.2em}
+  .card h3{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.6vw,34px);line-height:1.05;margin-top:auto;text-transform:uppercase}
+  .card p{color:var(--muted);margin-top:14px;font-size:15px}
+  .card .amt{font-family:var(--mono);color:var(--signal);font-size:15px;margin-top:22px;letter-spacing:.05em}
 
-footer{padding:54px 0;text-align:center}
-footer .slava{font:800 22px Unbounded;color:var(--yellow);margin-bottom:14px}
-footer .meta{color:var(--mut);font:500 13px "JetBrains Mono",monospace;letter-spacing:.05em;line-height:2}
-footer a{color:var(--hud)}
+  /* DONATE */
+  .donate{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  .donate h2{font-family:var(--display);font-weight:900;font-size:clamp(40px,9vw,120px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase}
+  .donate h2 .y{color:var(--signal)}
+  .donate .sub{color:#c8ccd3;max-width:460px;margin:24px auto 0}
+  .donate .big{display:inline-flex;align-items:center;gap:14px;margin-top:40px;background:var(--signal);color:#000;
+    font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:20px 40px;border-radius:3px;
+    transition:transform .25s,box-shadow .25s;box-shadow:0 0 0 rgba(255,212,0,0)}
+  .donate .big:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 20px 60px rgba(255,212,0,.22)}
+  .donate .jar{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;margin-top:22px}
+  .donate .jar a{color:var(--cold)}
 
-@media(max-width:600px){
-  section{padding:68px 0}
-  .donate-info{text-align:center}
-  .hud .corner{width:32px;height:32px}
-  .tele{font-size:10px}
-  .tele.lt{left:26px}.tele.rt{right:26px}
-}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .hero-vid{display:none}
-  .tele .blink{animation:none}
-}
+  footer{padding:70px var(--pad) 50px;border-top:1px solid var(--line);position:relative;z-index:3;background:var(--bg)}
+  footer .wrap{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-end}
+  footer .slava{font-family:var(--display);font-weight:800;font-size:clamp(22px,3vw,40px);text-transform:uppercase}
+  footer .slava .y{color:var(--signal)}
+  footer .meta{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:2;text-align:right}
+  footer .meta a{color:var(--cold)}
+
+  @media(max-width:760px){
+    nav{mix-blend-mode:normal;background:linear-gradient(180deg,rgba(6,7,8,.9),transparent)}
+    .hud,.corner,.reticle{display:none}
+    .alloc .card{min-height:52vh}
+    footer .wrap{flex-direction:column;align-items:flex-start}
+    footer .meta{text-align:left}
+  }
+  @media(prefers-reduced-motion:reduce){.grain{animation:none}.scrollhint .ln2{animation:none}}
 </style>
 </head>
-<body>
+<body class="is-loading">
 
-<nav class="nav" id="nav">
-  <div class="wrap nav-in">
-    <span class="logo">ПЛАСТ · <b>КВТ 30</b></span>
-    <a class="nav-cta" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">Підтримати</a>
-  </div>
+<canvas id="bg"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<div id="loader"><div class="lt">ініціалізація польоту</div><div class="lbar"><i></i></div></div>
+
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="hud tl"><div class="row">REC ● 4K · 60FPS</div><div class="row">ALT 412 M</div><div class="row">SPD 94 KM/H</div></div>
+<div class="hud tr"><div class="row">BAT 87%</div><div class="row">GPS 49.55 / 25.59</div><div class="row">SIG ▮▮▮▮▯</div></div>
+
+<nav>
+  <div class="brand">ПЛАСТ · <b>КВТ 30</b></div>
+  <a class="btn btn-y" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">Підтримати</a>
 </nav>
 
-<header class="hero" id="top">
-  <video class="hero-vid" id="heroVid" autoplay muted loop playsinline poster="drone-render.png" aria-hidden="true">
-    <source src="hero.mp4" type="video/mp4">
-  </video>
-  <div class="hud" aria-hidden="true">
-    <span class="corner tl"></span><span class="corner tr"></span>
-    <span class="corner bl"></span><span class="corner br"></span>
-    <span class="reticle"></span><span class="ring"></span>
-  </div>
-  <div class="tele lt" aria-hidden="true">
-    <span class="rec blink">● REC</span> &nbsp;4K · 60FPS<br>
-    ALT 412 M<br>SPD 94 KM/H
-  </div>
-  <div class="tele rt" aria-hidden="true">
-    BAT 87%<br>GPS 49.55 / 25.59<br>SIG ▮▮▮▮▯
-  </div>
-  <div class="wrap">
-    <span class="kicker" data-hero><span class="dot"></span> ПЛАСТ · КВТ 30 · ЗБІР НА ДРОНИ</span>
-    <h1><span class="ln" data-hero>Кожна гривня —</span><span class="ln" data-hero>крило в небі.</span></h1>
-    <p class="sub" data-hero>Збираємо разом із благодійним фондом «Алярм» на FPV-дрони для Сил Оборони. Те, що тримає небо, починається з твого донату.</p>
-    <div class="cta-row" data-hero>
-      <a class="btn primary" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">ПІДТРИМАТИ ЗБІР →</a>
-      <a class="btn ghost" href="#goal">Скільки вже зібрано</a>
-    </div>
-  </div>
-</header>
+<main class="content">
 
-<section id="why">
-  <div class="wrap">
-    <p class="eyebrow rv">Чому саме дрони</p>
-    <h2 class="rv">FPV — це очі й кулак піхоти</h2>
-    <p class="lead rv">Один недорогий дрон рятує життя цілого підрозділу й виконує роботу, яка раніше коштувала тонн боєприпасів. Це найефективніша гривня на фронті.</p>
-    <div class="facts">
-      <div class="fact rv"><div class="big">×1</div><p>Один FPV здатен зупинити одиницю важкої техніки ворога вартістю в мільйони.</p></div>
-      <div class="fact rv"><div class="big">7"</div><p>Дрон-камікадзе б'є на кілька кілометрів — розвідка й удар без ризику для бійців.</p></div>
-      <div class="fact rv"><div class="big">24/7</div><p>«Алярм» — пластуни-волонтери, що з 2022 року оперативно закривають потреби Сил Оборони.</p></div>
-      <div class="fact rv"><div class="big">100%</div><p>Усе до копійки — на залізо. Банка офіційна, рух коштів прозорий, звіт публічний.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="drone-sec" id="drone">
-  <div class="wrap">
-    <p class="eyebrow rv" style="justify-content:center">Об'єкт збору</p>
-    <h2 class="rv">7-дюймовий FPV, який ти наближаєш</h2>
-    <p class="lead rv" style="margin:0 auto">Карбонова рама, мотори з мідними обмотками, FPV-камера, політний стек. Саме таке залізо летить на фронт за твій донат.</p>
-    <div class="drone-stage rv">
-      <video id="droneVid" autoplay muted loop playsinline poster="drone-render.png" aria-hidden="true">
-        <source src="drone-explode.mp4" type="video/mp4">
-      </video>
-      <div class="scan"></div>
-      <span class="lbl">FPV · 7IN · CARBON · LIVE BUILD</span>
-    </div>
-  </div>
-</section>
-
-<section id="goal">
-  <div class="wrap">
-    <p class="eyebrow rv">Ціль збору</p>
-    <h2 class="rv">Прогрес у реальному часі</h2>
-    <p class="lead rv">Мета — назбирати на партію дронів. Стеж за прогресом і допомагай довести лічильник до кінця.</p>
-    <div class="goal-card">
-      <div class="goal-top">
-        <span class="goal-raised" id="raised">0 ₴</span>
-        <span class="goal-of">ціль <b id="goalTxt">25 000 ₴</b> · <span id="pct">0%</span></span>
-      </div>
-      <div class="track"><div class="fill" id="fill"></div></div>
-      <div class="goal-foot"><span>// ОНОВЛЮЄТЬСЯ ЩОДНЯ</span><span id="donors">збір триває</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="use">
-  <div class="wrap">
-    <p class="eyebrow rv">Куди підуть кошти</p>
-    <h2 class="rv">Прозоро, до гривні</h2>
-    <div class="use-grid">
-      <div class="use rv"><div class="n">01 / БпЛА</div><h3>Дрони та комплектуючі</h3><p>FPV-рами, мотори, камери, батареї — готові до польоту апарати.</p></div>
-      <div class="use rv"><div class="n">02 / АВТОМАТИЗАЦІЯ</div><h3>Системи для 80 ОДШБр</h3><p>Автоматизація польотів БпЛА для десантно-штурмової бригади.</p></div>
-      <div class="use rv"><div class="n">03 / МОБІЛЬНІСТЬ</div><h3>Пікапи для ССО</h3><p>Транспорт для Сил спеціальних операцій — швидкість рятує життя.</p></div>
-      <div class="use rv"><div class="n">04 / МАЙСТЕРНЯ</div><h3>Модернізація дронів</h3><p>Drone Up — апгрейд сотні апаратів для «Хижаків висот» 59 ОШБр.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="donate" id="donate">
-  <div class="wrap">
-    <p class="eyebrow rv" style="justify-content:center">Долучитися</p>
-    <h2 class="rv">Задонать — посилання в банці</h2>
-    <p class="lead rv">Будь-яка сума наближає ціль. Не можеш донатити — поділись цією сторінкою, репост безкоштовний, а працює.</p>
-    <div class="donate-box">
-      <div class="qr rv"><img id="qrImg" alt="QR-код банки monobank" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=0&data=https%3A%2F%2Fsend.monobank.ua%2Fjar%2F35k1vso2gM"></div>
-      <div class="donate-info rv">
-        <a class="btn primary big-btn" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">ВІДКРИТИ БАНКУ →</a>
-        <div class="jarline">monobank jar<br><b>send.monobank.ua/jar/35k1vso2gM</b></div>
+  <section class="hero">
+    <div class="wrap">
+      <span class="kick">Пласт · КВТ 30 · збір на FPV-дрони</span>
+      <h1>
+        <span class="ln"><span>НЕБО</span></span>
+        <span class="ln"><span class="em">ТРИМАЄ</span></span>
+        <span class="ln"><span>ОБОРОНУ</span></span>
+      </h1>
+      <p class="sub">Збираємо разом із благодійним фондом «Алярм» на FPV-дрони для Сил Оборони. Кожна гривня — крило в небі. Те, що тримає фронт, починається з твого донату.</p>
+      <div class="cta">
+        <a class="btn btn-y" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">Підтримати збір →</a>
+        <a class="btn btn-ghost" href="#goal">Скільки вже зібрано</a>
       </div>
     </div>
-  </div>
-</section>
+    <div class="scrollhint"><span class="ln2"></span> гортай</div>
+  </section>
+
+  <section class="manifesto">
+    <div class="wrap">
+      <p class="line"><span class="w">FPV-дрон</span> бачить першим,</p>
+      <p class="line"><span class="w">б’є точно</span> і коштує <span class="y">менше,</span></p>
+      <p class="line">ніж хвилина артобстрілу.</p>
+      <p class="line"><span class="w">Розвідка. Коригування.</span></p>
+      <p class="line"><span class="w">Захист піхоти.</span></p>
+      <p class="note">Один зібраний дрон — це десятки вцілілих позицій і чиєсь повернення додому. Ми не просимо багато. Ми просимо разом.</p>
+    </div>
+  </section>
+
+  <section class="seq" id="seq">
+    <div class="seq-stick">
+      <canvas id="seqc"></canvas>
+      <div class="seq-overlay">
+        <span class="kick">Розвідка з неба · кожен донат — це виліт</span>
+        <h2 class="seq-h">Очі, що<br>тримають <span class="y">фронт</span>.</h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="goal" id="goal">
+    <div class="wrap">
+      <div class="lbl">Ціль збору</div>
+      <div class="num"><span data-count>0</span> <small>₴</small></div>
+      <div class="track"><i></i></div>
+      <div class="meta"><span>Зібрано <b data-raised>0 ₴</b></span><span>Прогрес <b data-pct>0%</b></span><span>Новий збір · <b>почни ти</b></span></div>
+    </div>
+  </section>
+
+  <section class="alloc">
+    <div class="track">
+      <div class="head">
+        <span class="kick">Прозоро, до гривні</span>
+        <h2>На що<br>підуть кошти</h2>
+        <p>Усе через офіційний фонд «Алярм». Звіти — публічні. Жодна гривня не губиться.</p>
+      </div>
+      <div class="card"><div class="n">01</div><h3>FPV-дрони<br>та рами</h3><p>7-дюймові ударні платформи — основа збору.</p><div class="amt">≈ 8 000 ₴ / шт</div></div>
+      <div class="card"><div class="n">02</div><h3>Батареї<br>та зарядні</h3><p>Те, без чого дрон не злетить удруге.</p><div class="amt">≈ 2 500 ₴ / комплект</div></div>
+      <div class="card"><div class="n">03</div><h3>Системи для<br>80 ОДШБр</h3><p>Передавачі, окуляри, антени для екіпажів.</p><div class="amt">за потребою підрозділу</div></div>
+      <div class="card"><div class="n">04</div><h3>Модернізація<br>та ремонт</h3><p>Щоб кожен дрон повернувся в бій.</p><div class="amt">постійно</div></div>
+    </div>
+  </section>
+
+  <section class="donate">
+    <div class="wrap">
+      <h2>Закриймо<br>збір <span class="y">разом</span></h2>
+      <p class="sub">Задонать стільки, скільки відгукнеться. Поділись — і збір закриється швидше, ніж ти думаєш.</p>
+      <a class="big" href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">Задонатити в банку →</a>
+      <div class="jar">Банка Monobank · <a href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">send.monobank.ua/jar/35k1vso2gM</a></div>
+    </div>
+  </section>
+
+</main>
 
 <footer>
   <div class="wrap">
-    <div class="slava">Слава Україні! 🇺🇦</div>
+    <div class="slava">Слава Україні! <span class="y">🇺🇦</span></div>
     <div class="meta">
       ПЛАСТ · КРАЙОВИЙ ВИШКІЛЬНИЙ ТАБІР 30<br>
-      Партнер збору: БФ «Алярм» · <a href="https://instagram.com/alarm_shtab" target="_blank" rel="noopener">@alarm_shtab</a>
+      Партнер збору: БФ «Алярм» · <a href="https://www.instagram.com/alarm_shtab/" target="_blank" rel="noopener">@alarm_shtab</a><br>
+      Банка: <a href="https://send.monobank.ua/jar/35k1vso2gM" target="_blank" rel="noopener">send.monobank.ua/jar/35k1vso2gM</a>
     </div>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script>
-// === config (real data) ===
-const GOAL = 25000;        // ціль збору, ₴
-const RAISED = 0;          // зібрано — оновлюй це число вручну за банкою
-const fmt = n => Math.round(n).toLocaleString("uk-UA") + " ₴";
-const pct = Math.min(100, Math.round(RAISED / GOAL * 100));
-document.getElementById("goalTxt").textContent = fmt(GOAL);
+(function(){
+  "use strict";
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// nav scroll
-const navEl = document.getElementById("nav");
-addEventListener("scroll", () => navEl.classList.toggle("scrolled", scrollY > 60), {passive:true});
+  /* ---------- WebGL particle sky (drone swarm) ---------- */
+  function initWebGL(){
+    if(reduce || !window.THREE) return false;
+    var canvas = document.getElementById('bg'), ctx;
+    try{ ctx = canvas.getContext('webgl') || canvas.getContext('experimental-webgl'); }catch(e){}
+    if(!ctx) return false;
 
-const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (reduced){ const v = document.getElementById("heroVid"); if (v){ v.removeAttribute("autoplay"); v.pause(); } }
+    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    var scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x060708, 0.055);
+    var camera = new THREE.PerspectiveCamera(62, window.innerWidth/window.innerHeight, 0.1, 100);
+    camera.position.set(0,0,18);
 
-if (window.gsap){
-  gsap.registerPlugin(ScrollTrigger);
+    // soft sprite
+    var c = document.createElement('canvas'); c.width=c.height=64;
+    var g = c.getContext('2d'); var grd = g.createRadialGradient(32,32,0,32,32,32);
+    grd.addColorStop(0,'rgba(255,255,255,1)'); grd.addColorStop(.25,'rgba(220,230,255,.85)');
+    grd.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=grd; g.beginPath(); g.arc(32,32,32,0,Math.PI*2); g.fill();
+    var sprite = new THREE.Texture(c); sprite.needsUpdate=true;
 
-  gsap.matchMedia().add({
-    motion: "(prefers-reduced-motion: no-preference)",
-    reduce: "(prefers-reduced-motion: reduce)"
-  }, (ctx) => {
-    const {motion} = ctx.conditions;
+    var COUNT = window.innerWidth<760 ? 2600 : 6000;
+    var pos = new Float32Array(COUNT*3), col = new Float32Array(COUNT*3), spd = new Float32Array(COUNT);
+    var cBlue = new THREE.Color(0x6f93ff), cWhite = new THREE.Color(0xdfe6ff), cY = new THREE.Color(0xffd400);
+    for(var i=0;i<COUNT;i++){
+      var r = 7 + Math.random()*32, a = Math.random()*Math.PI*2, y = (Math.random()-0.5)*38;
+      pos[i*3]   = Math.cos(a)*r;
+      pos[i*3+1] = y;
+      pos[i*3+2] = Math.sin(a)*r - 4;
+      var t = Math.random(); var cc = t>0.93 ? cY : (t>0.5 ? cWhite : cBlue);
+      col[i*3]=cc.r; col[i*3+1]=cc.g; col[i*3+2]=cc.b;
+      spd[i] = 0.2 + Math.random()*0.9;
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col,3));
+    var mat = new THREE.PointsMaterial({size:0.2, map:sprite, vertexColors:true, transparent:true,
+      depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.62});
+    var points = new THREE.Points(geo, mat);
+    scene.add(points);
 
-    // hero stagger
-    if (motion){
-      gsap.from("[data-hero]", {y:26, opacity:0, filter:"blur(8px)", duration:.9, stagger:.12, ease:"power3.out", delay:.2});
+    var mouse = {x:0,y:0}, tgt={x:0,y:0};
+    window.addEventListener('pointermove', function(e){
+      mouse.x = (e.clientX/window.innerWidth - .5);
+      mouse.y = (e.clientY/window.innerHeight - .5);
+    }, {passive:true});
+
+    window.scrollProgress = 0;
+    var clock = new THREE.Clock();
+    function render(){
+      var dt = clock.getDelta(), el = clock.elapsedTime;
+      var p = geo.attributes.position.array;
+      for(var i=0;i<COUNT;i++){
+        p[i*3+1] += spd[i]*dt*1.6;
+        if(p[i*3+1] > 20){ p[i*3+1] = -20; }
+      }
+      geo.attributes.position.needsUpdate = true;
+      tgt.x += (mouse.x - tgt.x)*0.04; tgt.y += (mouse.y - tgt.y)*0.04;
+      points.rotation.y = el*0.02 + tgt.x*0.5;
+      points.rotation.x = tgt.y*0.3;
+      camera.position.z = 18 - window.scrollProgress*7;
+      camera.position.y = window.scrollProgress*4;
+      camera.lookAt(0, window.scrollProgress*2, 0);
+      mat.opacity = 0.9 - window.scrollProgress*0.45;
+      renderer.render(scene, camera);
+      requestAnimationFrame(render);
+    }
+    render();
+    window.addEventListener('resize', function(){
+      camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    return true;
+  }
+  var webgl = initWebGL();
+  if(!webgl){ document.getElementById('bg').style.background =
+    'radial-gradient(120% 80% at 50% 0%, #16203a 0%, #0a0c12 45%, #060708 100%)'; }
+
+  /* ---------- loader → intro ---------- */
+  function startIntro(){
+    var tl = gsap.timeline();
+    tl.to('#loader .lbar i',{width:'100%',duration:.7,ease:'power2.inOut'})
+      .to('#loader',{autoAlpha:0,duration:.5,onComplete:function(){
+        var l=document.getElementById('loader'); if(l) l.style.display='none';
+        document.body.classList.remove('is-loading');
+      }})
+      .from('.hero h1 .ln span',{yPercent:115,duration:1,ease:'expo.out',stagger:.09},'-=.1')
+      .from('.hero .kick',{autoAlpha:0,y:14,duration:.6},'-=.8')
+      .from('.hero .sub',{autoAlpha:0,y:18,duration:.7},'-=.6')
+      .from('.hero .cta .btn',{autoAlpha:0,y:18,duration:.6,stagger:.1},'-=.5')
+      .to(['.corner','.hud'],{autoAlpha:1,duration:.8,stagger:.05},'-=.7');
+  }
+
+  /* ---------- Lenis smooth scroll ---------- */
+  function initScroll(){
+    gsap.registerPlugin(ScrollTrigger);
+    if(!reduce && window.Lenis){
+      var lenis = new Lenis({lerp:0.09, wheelMultiplier:1});
+      lenis.on('scroll', function(e){
+        window.scrollProgress = Math.min(e.scroll / (window.innerHeight*1.2), 1);
+        ScrollTrigger.update();
+      });
+      gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+      gsap.ticker.lagSmoothing(0);
+      document.querySelectorAll('a[href^="#"]').forEach(function(a){
+        a.addEventListener('click', function(ev){ ev.preventDefault();
+          var el=document.querySelector(a.getAttribute('href')); if(el) lenis.scrollTo(el,{offset:0}); });
+      });
     }
 
-    // section reveals
-    gsap.utils.toArray(".rv").forEach(el => {
-      gsap.from(el, {
-        y: motion ? 30 : 0, opacity:0, duration:.8, ease:"power2.out",
-        scrollTrigger:{trigger:el, start:"top 85%", toggleActions:"play none none reverse", markers:false}
+    var mm = gsap.matchMedia();
+    mm.add({motion:'(prefers-reduced-motion: no-preference)', desk:'(min-width:761px)'}, function(ctx){
+      var motion = ctx.conditions.motion, desk = ctx.conditions.desk;
+
+      gsap.to('.hero .wrap',{yPercent:-12, autoAlpha:.0, scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+
+      gsap.utils.toArray('.manifesto .line').forEach(function(ln){
+        gsap.from(ln,{autoAlpha:0,y:40,duration:.9,ease:'power3.out',
+          scrollTrigger:{trigger:ln,start:'top 85%',end:'top 55%',toggleActions:'play none none reverse'}});
       });
+
+      // goal counter + bar (scrub)
+      var goalObj={v:0}, GOAL=25000, RAISED=0;
+      var numEl=document.querySelector('[data-count]'), barEl=document.querySelector('.goal .track i'),
+          raisedEl=document.querySelector('[data-raised]'), pctEl=document.querySelector('[data-pct]');
+      function fmt(n){return Math.round(n).toLocaleString('uk-UA').replace(/,/g,' ');}
+      gsap.to(goalObj,{v:GOAL,ease:'none',
+        scrollTrigger:{trigger:'.goal',start:'top 70%',end:'top 20%',scrub:.6},
+        onUpdate:function(){ if(numEl) numEl.textContent=fmt(goalObj.v); }});
+      gsap.fromTo(barEl,{scaleX:0},{scaleX: RAISED/GOAL || 0.001, ease:'none',
+        scrollTrigger:{trigger:'.goal',start:'top 70%',end:'top 20%',scrub:.6}});
+      if(raisedEl) raisedEl.textContent = fmt(RAISED)+' ₴';
+      if(pctEl) pctEl.textContent = Math.round(RAISED/GOAL*100)+'%';
+
+      // horizontal alloc (desktop only)
+      if(desk){
+        var track=document.querySelector('.alloc .track');
+        var dist=track.scrollWidth - window.innerWidth + 80;
+        gsap.to(track,{x:-dist,ease:'none',
+          scrollTrigger:{trigger:'.alloc',start:'top top',end:function(){return '+='+dist;},pin:true,scrub:true,invalidateOnRefresh:true}});
+      } else {
+        gsap.utils.toArray('.alloc .card,.alloc .head').forEach(function(el){
+          gsap.from(el,{autoAlpha:0,y:30,duration:.7,scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}});
+        });
+      }
+
+      gsap.from('.donate h2',{autoAlpha:0,y:50,duration:1,ease:'power3.out',
+        scrollTrigger:{trigger:'.donate',start:'top 70%',toggleActions:'play none none reverse'}});
+      gsap.from('.donate .big',{autoAlpha:0,scale:.9,duration:.7,ease:'back.out(1.6)',
+        scrollTrigger:{trigger:'.donate',start:'top 55%',toggleActions:'play none none reverse'}});
     });
 
-    // counter + progress bar (scrub)
-    const raisedEl = document.getElementById("raised");
-    const pctEl = document.getElementById("pct");
-    const obj = {v:0};
-    ScrollTrigger.create({
-      trigger:"#goal", start:"top 70%", markers:false,
-      onEnter: () => {
-        gsap.to(obj, {v:RAISED, duration:1.6, ease:"power2.out", onUpdate:()=>{ raisedEl.textContent = fmt(obj.v); }});
-        gsap.to({p:0}, {p:pct, duration:1.6, ease:"power2.out", onUpdate:function(){ pctEl.textContent = Math.round(this.targets()[0].p)+"%"; }});
-      },
-      once:true
+    // reduced-motion fallback: ensure counter shows final
+    mm.add('(prefers-reduced-motion: reduce)', function(){
+      var n=document.querySelector('[data-count]'); if(n) n.textContent='25 000';
     });
-    gsap.to("#fill", {
-      scaleX: pct/100, ease:"none",
-      scrollTrigger:{trigger:"#goal", start:"top 75%", end:"top 30%", scrub:true, markers:false}
-    });
+
+    // scroll-scrub drone sequence (canvas frame playback)
+    (function(){
+      var cv=document.getElementById('seqc'); if(!cv) return;
+      var cx=cv.getContext('2d'), FN=121, frames=[], cur=0, ready=0;
+      function draw(i){ i=Math.max(0,Math.min(FN-1,Math.round(i))); var img=frames[i];
+        if(!cx||!img||!img.complete||!img.naturalWidth) return;
+        var cw=cv.width,ch=cv.height,iw=img.naturalWidth,ih=img.naturalHeight,
+            s=Math.max(cw/iw,ch/ih),w=iw*s,h=ih*s;
+        cx.clearRect(0,0,cw,ch); cx.drawImage(img,(cw-w)/2,(ch-h)/2,w,h); cur=i; }
+      function size(){ var dpr=Math.min(window.devicePixelRatio||1,2);
+        cv.width=Math.floor(cv.clientWidth*dpr); cv.height=Math.floor(cv.clientHeight*dpr); draw(cur); }
+      for(var i=1;i<=FN;i++){ (function(idx){ var im=new Image();
+        im.onload=function(){ ready++; if(idx===1){ size(); draw(0); } };
+        im.src='seq/f_'+('00'+idx).slice(-3)+'.webp'; frames[idx-1]=im; })(i); }
+      window.addEventListener('resize', size); size();
+      if(reduce){ var t=setInterval(function(){ if(ready>FN*0.6){ draw(Math.floor(FN*0.55)); clearInterval(t);} },120); return; }
+      ScrollTrigger.create({trigger:'.seq', start:'top top', end:'bottom bottom', scrub:true,
+        onUpdate:function(self){ draw(self.progress*(FN-1)); }});
+      gsap.from('.seq-overlay',{autoAlpha:0,y:30,duration:.8,
+        scrollTrigger:{trigger:'.seq', start:'top 55%', toggleActions:'play none none reverse'}});
+    })();
+  }
+
+  window.addEventListener('load', function(){
+    initScroll();
+    startIntro();
+    setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); }, 400);
   });
-}
+})();
 </script>
 </body>
 </html>
