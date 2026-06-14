@@ -158,6 +158,19 @@
     font-weight:500;font-size:13px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
   .goal .meta b{color:var(--ink);font-weight:700}
 
+  /* goal — closed celebration */
+  #confetti{position:fixed;inset:0;z-index:70;pointer-events:none;display:none}
+  #confetti.on{display:block}
+  .goal.won .num{color:var(--gold);text-shadow:0 0 70px rgba(232,181,75,.45)}
+  .won-wrap{overflow:hidden;max-height:0;opacity:0;margin-top:0;
+    transition:max-height .9s var(--ease),opacity .9s,margin-top .9s}
+  .won-wrap.show{max-height:260px;opacity:1;margin-top:34px}
+  .won-badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;
+    font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#0A0908;background:var(--gold);
+    padding:12px 24px;border-radius:100px;box-shadow:0 0 50px rgba(232,181,75,.5)}
+  .won-line{margin-top:20px;color:var(--ink);font-size:clamp(15px,1.5vw,19px);line-height:1.55}
+  .won-line b{color:var(--gold)}
+
   /* ALLOCATION */
   .alloc{padding-top:clamp(100px,16vh,190px);padding-bottom:clamp(100px,16vh,190px)}
   .alloc .head{max-width:760px;margin-bottom:clamp(44px,7vh,84px)}
@@ -231,6 +244,7 @@
 <div class="vignette"></div>
 <div class="grain"></div>
 <div class="prog"></div>
+<canvas id="confetti"></canvas>
 
 <div id="loader"><div class="lw">Небо тримає оборону</div><div class="lbar"><i></i></div></div>
 
@@ -300,6 +314,7 @@
       <div class="num"><span data-count>0</span> <small>₴</small></div>
       <div class="track"><i></i></div>
       <div class="meta"><span>Зібрано <b data-raised>0 ₴</b></span><span>Прогрес <b data-pct>0%</b></span><span>Новий збір · <b>почни ти</b></span></div>
+      <div class="won-wrap"><span class="won-badge">✓ Ціль закрито</span><p class="won-line">Дякуємо кожному, хто доклався — <b>небо отримає нові крила</b>. 🚁</p></div>
     </div>
   </section>
 
@@ -422,15 +437,19 @@
 
     // goal count-up + bar
     var GOAL=2000, RAISED=1041.74, o={v:0};
+    var won = RAISED>=GOAL || new URLSearchParams(location.search).has('win');
     var numEl=document.querySelector('[data-count]'), barEl=document.querySelector('.goal .track i'),
         rEl=document.querySelector('[data-raised]'), pEl=document.querySelector('[data-pct]');
     function fmt(n){return Math.round(n).toLocaleString('uk-UA').replace(/,/g,' ').replace(/ /g,' ');}
     gsap.to(o,{v:GOAL,ease:'none',scrollTrigger:{trigger:'.goal',start:'top 72%',end:'top 28%',scrub:.6},
       onUpdate:function(){ if(numEl) numEl.textContent=fmt(o.v); }});
-    gsap.fromTo(barEl,{scaleX:0},{scaleX:(RAISED/GOAL)||0.004,ease:'none',
+    gsap.fromTo(barEl,{scaleX:0},{scaleX: won?1:((RAISED/GOAL)||0.004),ease:'none',
       scrollTrigger:{trigger:'.goal',start:'top 72%',end:'top 28%',scrub:.6}});
-    if(rEl) rEl.textContent=RAISED.toLocaleString('uk-UA',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₴';
-    if(pEl) pEl.textContent=Math.round(RAISED/GOAL*100)+'%';
+    if(rEl) rEl.textContent=(won?Math.max(RAISED,GOAL):RAISED).toLocaleString('uk-UA',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₴';
+    if(pEl) pEl.textContent=(won?100:Math.round(RAISED/GOAL*100))+'%';
+    if(won){ document.querySelector('.goal').classList.add('won'); var celebrated=false;
+      ScrollTrigger.create({trigger:'.goal',start:'top 65%',onEnter:function(){ if(celebrated)return; celebrated=true;
+        var w=document.querySelector('.won-wrap'); if(w) w.classList.add('show'); confetti(); }}); }
 
     // allocation
     gsap.from('.alloc .head > *',{autoAlpha:0,y:24,duration:.85,ease:'power3.out',stagger:.1,
@@ -455,6 +474,27 @@
           duration:.5, ease:'power3.out'}); });
       b.addEventListener('pointerleave', function(){ gsap.to(b,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'}); });
     });
+  }
+
+  function confetti(){
+    var cv=document.getElementById('confetti'); if(!cv) return;
+    cv.classList.add('on');
+    var cx=cv.getContext('2d');
+    function size(){ cv.width=innerWidth; cv.height=innerHeight; }
+    size(); addEventListener('resize', size);
+    var cols=['#E8B54B','#FFD500','#5B83FF','#F3EFE7','#C9692C'], P=[];
+    for(var i=0;i<180;i++){ P.push({x:Math.random()*cv.width, y:-20-Math.random()*cv.height*0.6,
+      w:6+Math.random()*7, h:9+Math.random()*9, c:cols[(Math.random()*cols.length)|0],
+      vx:(Math.random()-.5)*3.4, vy:2.4+Math.random()*4.2, rot:Math.random()*6.28, vr:(Math.random()-.5)*.34, life:1}); }
+    var start=null, dur=5400;
+    function frame(ts){ if(start===null)start=ts; var el=ts-start; cx.clearRect(0,0,cv.width,cv.height);
+      for(var i=0;i<P.length;i++){ var p=P[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.rot+=p.vr;
+        if(el>dur-1500) p.life-=0.02;
+        cx.save(); cx.globalAlpha=Math.max(0,p.life); cx.translate(p.x,p.y); cx.rotate(p.rot);
+        cx.fillStyle=p.c; cx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cx.restore(); }
+      if(el<dur){ requestAnimationFrame(frame); } else { cx.clearRect(0,0,cv.width,cv.height); cv.classList.remove('on'); }
+    }
+    requestAnimationFrame(frame);
   }
 
   var booted=false;
