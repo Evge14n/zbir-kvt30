@@ -24,7 +24,8 @@
   body.is-loading{overflow:hidden;height:100vh}
   a{color:inherit;text-decoration:none}
   ::selection{background:var(--signal);color:#000}
-  canvas#bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  canvas#bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;
+    background:radial-gradient(120% 80% at 50% 0%, #16203a 0%, #0a0c12 45%, #060708 100%)}
   /* atmosphere overlays */
   .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
     background:radial-gradient(120% 90% at 50% 18%,transparent 40%,rgba(0,0,0,.55) 100%),
@@ -87,10 +88,6 @@
   .corner.tr{top:74px;right:calc(var(--pad) - 14px);border-left:0;border-bottom:0}
   .corner.bl{bottom:24px;left:calc(var(--pad) - 14px);border-right:0;border-top:0}
   .corner.br{bottom:24px;right:calc(var(--pad) - 14px);border-left:0;border-top:0}
-  .reticle{position:fixed;z-index:9;top:50%;left:50%;width:120px;height:120px;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
-  .reticle::before,.reticle::after{content:"";position:absolute;background:rgba(91,131,255,.35)}
-  .reticle::before{top:50%;left:0;right:0;height:1px} .reticle::after{left:50%;top:0;bottom:0;width:1px}
-  .reticle i{position:absolute;inset:34px;border:1px solid rgba(91,131,255,.45);border-radius:50%}
 
   /* MANIFESTO */
   .manifesto{padding-top:24vh;padding-bottom:24vh}
@@ -102,10 +99,11 @@
   .manifesto .note{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);
     text-transform:uppercase;margin-top:40px;max-width:520px;line-height:1.9}
 
-  /* SEQ — scroll-scrub drone */
+  /* SEQ — scroll-scrub drone (desktop) / looping video (mobile) */
   .seq{position:relative;height:300vh}
   .seq-stick{position:sticky;top:0;height:100vh;overflow:hidden;background:#05060a}
-  #seqc{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #seqc,#prodc{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .seq-vid,.prod-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:0;background:#05060a}
   .seq-stick::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(80% 60% at 50% 45%,transparent 40%,rgba(5,6,10,.7) 100%)}
   .seq-overlay{position:absolute;left:var(--pad);bottom:11vh;z-index:2;max-width:720px}
@@ -113,10 +111,9 @@
     text-transform:uppercase;font-size:clamp(34px,7vw,104px);margin-top:16px}
   .seq-overlay .seq-h .y{color:var(--signal)}
 
-  /* PRODUCT — scroll-scrub drone disassembly */
+  /* PRODUCT — scroll-scrub drone disassembly (desktop) / looping video (mobile) */
   .prod{position:relative;height:440vh}
   .prod-stick{position:sticky;top:0;height:100vh;overflow:hidden;background:#05060a}
-  #prodc{position:absolute;inset:0;width:100%;height:100%;display:block}
   .prod-stick::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(82% 64% at 50% 46%,transparent 42%,rgba(5,6,10,.66) 100%)}
   .prod-overlay{position:absolute;left:var(--pad);bottom:11vh;z-index:2;max-width:640px}
   .prod-overlay .prod-h{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.9;letter-spacing:-.02em;font-size:clamp(34px,6.5vw,98px);margin:14px 0 0}
@@ -168,15 +165,16 @@
 
   /* engagement layer */
   .scrollprog{position:fixed;top:0;left:0;height:2px;width:0;z-index:30;background:linear-gradient(90deg,var(--cold),var(--signal));box-shadow:0 0 12px var(--signal)}
+  .cur,.cur-dot{display:none}
   @media(pointer:fine){
     body{cursor:none}
     a,button,.btn,.card,.donate .big{cursor:none}
-    .cur{position:fixed;top:0;left:0;z-index:60;pointer-events:none;will-change:transform}
+    .cur{display:block;position:fixed;top:0;left:0;z-index:60;pointer-events:none;will-change:transform}
     .cur-ring{width:30px;height:30px;margin:-15px 0 0 -15px;border:1px solid rgba(91,131,255,.85);border-radius:50%;transition:width .22s,height .22s,margin .22s,border-color .22s,background .22s}
     .cur-ring::before,.cur-ring::after{content:"";position:absolute;background:rgba(91,131,255,.65)}
     .cur-ring::before{top:50%;left:-7px;right:-7px;height:1px;transform:translateY(-50%)}
     .cur-ring::after{left:50%;top:-7px;bottom:-7px;width:1px;transform:translateX(-50%)}
-    .cur-dot{position:fixed;top:0;left:0;z-index:61;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--signal);pointer-events:none;box-shadow:0 0 8px var(--signal)}
+    .cur-dot{display:block;position:fixed;top:0;left:0;z-index:61;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--signal);pointer-events:none;box-shadow:0 0 8px var(--signal)}
     .cur.hot .cur-ring{width:58px;height:58px;margin:-29px 0 0 -29px;border-color:var(--signal);background:rgba(255,212,0,.08)}
     .card{transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,background .45s}
     .card:hover{transform:translateY(-10px);border-color:rgba(91,131,255,.55);background:linear-gradient(180deg,rgba(91,131,255,.07),rgba(255,255,255,.01))}
@@ -187,7 +185,10 @@
 
   @media(max-width:760px){
     nav{mix-blend-mode:normal;background:linear-gradient(180deg,rgba(6,7,8,.9),transparent)}
-    .hud,.corner,.reticle{display:none}
+    .hud,.corner{display:none}
+    .seq{height:175vh} .prod{height:205vh}
+    #seqc,#prodc{display:none} .seq-vid,.prod-vid{display:block}
+    .seq-overlay{bottom:13vh} .prod-overlay{bottom:13vh}
     .alloc .card{min-height:52vh}
     footer .wrap{flex-direction:column;align-items:flex-start}
     footer .meta{text-align:left}
@@ -248,6 +249,7 @@
   <section class="seq" id="seq">
     <div class="seq-stick">
       <canvas id="seqc"></canvas>
+      <video class="seq-vid" playsinline muted loop preload="none" poster="seq-poster.jpg"></video>
       <div class="seq-overlay">
         <span class="kick">Розвідка з неба · кожен донат — це виліт</span>
         <h2 class="seq-h">Очі, що<br>тримають <span class="y">фронт</span>.</h2>
@@ -258,6 +260,7 @@
   <section class="prod" id="prod">
     <div class="prod-stick">
       <canvas id="prodc"></canvas>
+      <video class="prod-vid" playsinline muted loop preload="none" poster="prod-poster.jpg"></video>
       <div class="prod-overlay">
         <span class="kick">7-дюймовий FPV · 1 дрон ≈ 8 000 ₴</span>
         <h2 class="prod-h">Ось що тримає <span class="y">небо</span>.</h2>
@@ -311,7 +314,7 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
@@ -319,6 +322,33 @@
 (function(){
   "use strict";
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var MOB = window.innerWidth < 761 || !window.matchMedia('(pointer:fine)').matches;
+
+  // mobile: light looping video instead of the heavy frame-scrub;
+  // play only while the section is in view (smooth + battery-friendly)
+  function bindVid(sel, src){
+    var v = document.querySelector(sel); if(!v) return;
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    if(!v.getAttribute('src')) v.src = src;
+    function go(play){
+      try{
+        if(play){ v.preload='auto'; var p=v.play(); if(p && p.catch) p.catch(function(){}); }
+        else { v.pause(); }
+      }catch(e){}
+    }
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es.forEach(function(e){ go(e.isIntersecting); }); },
+        {rootMargin:'300px 0px'}).observe(v);
+    } else { go(true); }
+  }
+
+  function whenTHREE(cb){
+    if(window.THREE) return cb();
+    var n=0, t=setInterval(function(){
+      if(window.THREE){ clearInterval(t); cb(); }
+      else if(++n>50){ clearInterval(t); }
+    }, 90);
+  }
 
   /* ---------- WebGL particle sky (drone swarm) ---------- */
   function initWebGL(){
@@ -327,8 +357,8 @@
     try{ ctx = canvas.getContext('webgl') || canvas.getContext('experimental-webgl'); }catch(e){}
     if(!ctx) return false;
 
-    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:true});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:!MOB});
+    renderer.setPixelRatio(MOB ? 1.3 : Math.min(window.devicePixelRatio,2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     var scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x060708, 0.055);
@@ -343,7 +373,7 @@
     g.fillStyle=grd; g.beginPath(); g.arc(32,32,32,0,Math.PI*2); g.fill();
     var sprite = new THREE.Texture(c); sprite.needsUpdate=true;
 
-    var COUNT = window.innerWidth<760 ? 2600 : 6000;
+    var COUNT = MOB ? 1500 : 6000;
     var pos = new Float32Array(COUNT*3), col = new Float32Array(COUNT*3), spd = new Float32Array(COUNT);
     var cBlue = new THREE.Color(0x6f93ff), cWhite = new THREE.Color(0xdfe6ff), cY = new THREE.Color(0xffd400);
     for(var i=0;i<COUNT;i++){
@@ -364,21 +394,25 @@
     scene.add(points);
 
     var mouse = {x:0,y:0}, tgt={x:0,y:0};
-    window.addEventListener('pointermove', function(e){
-      mouse.x = (e.clientX/window.innerWidth - .5);
-      mouse.y = (e.clientY/window.innerHeight - .5);
-    }, {passive:true});
+    if(!MOB){
+      window.addEventListener('pointermove', function(e){
+        mouse.x = (e.clientX/window.innerWidth - .5);
+        mouse.y = (e.clientY/window.innerHeight - .5);
+      }, {passive:true});
+    }
 
     window.scrollProgress = 0;
     var clock = new THREE.Clock();
     function render(){
       var dt = clock.getDelta(), el = clock.elapsedTime;
-      var p = geo.attributes.position.array;
-      for(var i=0;i<COUNT;i++){
-        p[i*3+1] += spd[i]*dt*1.6;
-        if(p[i*3+1] > 20){ p[i*3+1] = -20; }
+      if(!MOB){
+        var p = geo.attributes.position.array;
+        for(var i=0;i<COUNT;i++){
+          p[i*3+1] += spd[i]*dt*1.6;
+          if(p[i*3+1] > 20){ p[i*3+1] = -20; }
+        }
+        geo.attributes.position.needsUpdate = true;
       }
-      geo.attributes.position.needsUpdate = true;
       tgt.x += (mouse.x - tgt.x)*0.04; tgt.y += (mouse.y - tgt.y)*0.04;
       points.rotation.y = el*0.02 + tgt.x*0.5;
       points.rotation.x = tgt.y*0.3;
@@ -396,9 +430,7 @@
     });
     return true;
   }
-  var webgl = initWebGL();
-  if(!webgl){ document.getElementById('bg').style.background =
-    'radial-gradient(120% 80% at 50% 0%, #16203a 0%, #0a0c12 45%, #060708 100%)'; }
+  whenTHREE(initWebGL);
 
   /* ---------- loader → intro ---------- */
   function startIntro(){
@@ -430,6 +462,10 @@
         a.addEventListener('click', function(ev){ ev.preventDefault();
           var el=document.querySelector(a.getAttribute('href')); if(el) lenis.scrollTo(el,{offset:0}); });
       });
+    } else {
+      window.addEventListener('scroll', function(){
+        window.scrollProgress = Math.min(window.pageYOffset / (window.innerHeight*1.2), 1);
+      }, {passive:true});
     }
 
     var mm = gsap.matchMedia();
@@ -477,10 +513,14 @@
     // reduced-motion fallback: ensure counter shows final
     mm.add('(prefers-reduced-motion: reduce)', function(){
       var n=document.querySelector('[data-count]'); if(n) n.textContent='25 000';
+      var b=document.querySelector('.goal .track i'); if(b) b.style.transform='scaleX(0.001)';
     });
 
-    // scroll-scrub drone sequence (canvas frame playback)
+    // SEQ: desktop = canvas frame-scrub; mobile = light looping <video>
     (function(){
+      gsap.from('.seq-overlay',{autoAlpha:0,y:30,duration:.8,
+        scrollTrigger:{trigger:'.seq', start:'top 55%', toggleActions:'play none none reverse'}});
+      if(MOB){ bindVid('.seq-vid','seq-m.mp4'); return; }
       var cv=document.getElementById('seqc'); if(!cv) return;
       var cx=cv.getContext('2d'), FN=121, frames=[], cur=0, ready=0;
       function draw(i){ i=Math.max(0,Math.min(FN-1,Math.round(i))); var img=frames[i];
@@ -497,12 +537,13 @@
       if(reduce){ var t=setInterval(function(){ if(ready>FN*0.6){ draw(Math.floor(FN*0.55)); clearInterval(t);} },120); return; }
       ScrollTrigger.create({trigger:'.seq', start:'top top', end:'bottom bottom', scrub:true,
         onUpdate:function(self){ draw(self.progress*(FN-1)); }});
-      gsap.from('.seq-overlay',{autoAlpha:0,y:30,duration:.8,
-        scrollTrigger:{trigger:'.seq', start:'top 55%', toggleActions:'play none none reverse'}});
     })();
 
-    // prod scroll-scrub drone disassembly
+    // PROD: desktop = canvas frame-scrub; mobile = light looping <video>
     (function(){
+      gsap.from('.prod-overlay',{autoAlpha:0,y:30,duration:.8,
+        scrollTrigger:{trigger:'.prod', start:'top 55%', toggleActions:'play none none reverse'}});
+      if(MOB){ bindVid('.prod-vid','prod-m.mp4'); return; }
       var cv=document.getElementById('prodc'); if(!cv) return;
       var cx=cv.getContext('2d'), FN=242, frames=[], cur=0, ready=0;
       function draw(i){ i=Math.max(0,Math.min(FN-1,Math.round(i))); var img=frames[i];
@@ -519,8 +560,6 @@
       if(reduce){ var t=setInterval(function(){ if(ready>FN*0.5){ draw(Math.floor(FN*0.5)); clearInterval(t);} },120); return; }
       ScrollTrigger.create({trigger:'.prod', start:'top top', end:'bottom bottom', scrub:true,
         onUpdate:function(self){ draw(self.progress*(FN-1)); }});
-      gsap.from('.prod-overlay',{autoAlpha:0,y:30,duration:.8,
-        scrollTrigger:{trigger:'.prod', start:'top 55%', toggleActions:'play none none reverse'}});
     })();
   }
 
@@ -528,11 +567,13 @@
     var prog=document.querySelector('.scrollprog');
     function onScroll(){ var h=document.documentElement.scrollHeight-window.innerHeight; if(prog) prog.style.width=(h>0?Math.min(window.pageYOffset/h,1)*100:0)+'%'; }
     window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
-    var altEl=document.querySelector('.hud.tl .row:nth-child(2)'), spdEl=document.querySelector('.hud.tl .row:nth-child(3)');
-    setInterval(function(){
-      if(altEl) altEl.textContent='ALT '+(404+Math.round(Math.sin(Date.now()/1400)*38))+' M';
-      if(spdEl) spdEl.textContent='SPD '+(92+Math.round(Math.cos(Date.now()/1100)*11))+' KM/H';
-    }, 650);
+    if(!MOB){
+      var altEl=document.querySelector('.hud.tl .row:nth-child(2)'), spdEl=document.querySelector('.hud.tl .row:nth-child(3)');
+      setInterval(function(){
+        if(altEl) altEl.textContent='ALT '+(404+Math.round(Math.sin(Date.now()/1400)*38))+' M';
+        if(spdEl) spdEl.textContent='SPD '+(92+Math.round(Math.cos(Date.now()/1100)*11))+' KM/H';
+      }, 650);
+    }
     if(reduce || !window.matchMedia('(pointer:fine)').matches) return;
     var cur=document.querySelector('.cur'), dot=document.querySelector('.cur-dot'), mx=innerWidth/2, my=innerHeight/2, cx=mx, cy=my;
     window.addEventListener('pointermove', function(e){ mx=e.clientX; my=e.clientY; if(dot) dot.style.transform='translate('+mx+'px,'+my+'px)'; }, {passive:true});
@@ -550,12 +591,18 @@
       if(hl) gsap.to(hl,{x:px*16,y:py*11,duration:.7,ease:'power2.out'}); if(hr) gsap.to(hr,{x:px*-16,y:py*11,duration:.7,ease:'power2.out'}); }, {passive:true});
   }
 
-  window.addEventListener('load', function(){
+  var booted=false;
+  function boot(){
+    if(booted || !window.gsap || !window.ScrollTrigger) return;
+    booted=true;
     initScroll();
     startIntro();
     initEngagement();
     setTimeout(function(){ if(window.ScrollTrigger) ScrollTrigger.refresh(); }, 400);
-  });
+  }
+  window.addEventListener('load', boot);
+  var _bt=setInterval(function(){ if(booted){ clearInterval(_bt); return; } boot(); }, 250);
+  setTimeout(function(){ clearInterval(_bt); boot(); }, 4000);
 })();
 </script>
 </body>
