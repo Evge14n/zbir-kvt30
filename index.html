@@ -113,13 +113,15 @@
     text-transform:uppercase;font-size:clamp(34px,7vw,104px);margin-top:16px}
   .seq-overlay .seq-h .y{color:var(--signal)}
 
-  /* PRODUCT — 4K drone */
-  .prod{position:relative;min-height:118vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:16vh var(--pad)}
-  .prod .kick{justify-content:center}
-  .prod-h{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.9;letter-spacing:-.02em;font-size:clamp(40px,8.5vw,128px);margin:14px 0 0;position:relative;z-index:2}
-  .prod-h .y{color:var(--signal)}
-  .prod-img{display:block;width:min(1180px,98vw);margin:2vh auto;filter:drop-shadow(0 50px 90px rgba(0,0,0,.7));will-change:transform;position:relative;z-index:1}
-  .prod-note{max-width:520px;margin:6px auto 0;color:#b9bec7;font-size:15px;position:relative;z-index:2}
+  /* PRODUCT — scroll-scrub drone disassembly */
+  .prod{position:relative;height:300vh}
+  .prod-stick{position:sticky;top:0;height:100vh;overflow:hidden;background:#05060a}
+  #prodc{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .prod-stick::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(82% 64% at 50% 46%,transparent 42%,rgba(5,6,10,.66) 100%)}
+  .prod-overlay{position:absolute;left:var(--pad);bottom:11vh;z-index:2;max-width:640px}
+  .prod-overlay .prod-h{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.9;letter-spacing:-.02em;font-size:clamp(34px,6.5vw,98px);margin:14px 0 0}
+  .prod-overlay .prod-h .y{color:var(--signal)}
+  .prod-overlay .prod-note{max-width:440px;margin-top:14px;color:#b9bec7;font-size:15px}
 
   /* GOAL */
   .goal{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
@@ -231,11 +233,15 @@
     </div>
   </section>
 
-  <section class="prod">
-    <span class="kick">7-дюймовий FPV · 1 дрон ≈ 8 000 ₴</span>
-    <h2 class="prod-h">Ось що тримає<br><span class="y">небо</span>.</h2>
-    <img class="prod-img" src="drone-web.webp" alt="7-дюймовий FPV-дрон для Сил Оборони" loading="lazy">
-    <p class="prod-note">Карбонова рама, безколекторні мотори, FPV-камера. Збираємо на ці «очі й кулак» для Сил Оборони — кожен дрон закриває десятки метрів фронту.</p>
+  <section class="prod" id="prod">
+    <div class="prod-stick">
+      <canvas id="prodc"></canvas>
+      <div class="prod-overlay">
+        <span class="kick">7-дюймовий FPV · 1 дрон ≈ 8 000 ₴</span>
+        <h2 class="prod-h">Ось що тримає <span class="y">небо</span>.</h2>
+        <p class="prod-note">Гортай — і він розкладається до останнього гвинта: карбон-рама, мотори, FPV-камера, електроніка. Саме на це збираємо для Сил Оборони.</p>
+      </div>
+    </div>
   </section>
 
   <section class="goal" id="goal">
@@ -440,11 +446,6 @@
         });
       }
 
-      gsap.fromTo('.prod-img',{scale:.9,y:60},{scale:1.06,y:-30,ease:'none',
-        scrollTrigger:{trigger:'.prod',start:'top bottom',end:'bottom top',scrub:true}});
-      gsap.from('.prod-h',{autoAlpha:0,y:40,duration:.9,ease:'power3.out',
-        scrollTrigger:{trigger:'.prod',start:'top 65%',toggleActions:'play none none reverse'}});
-
       gsap.from('.donate h2',{autoAlpha:0,y:50,duration:1,ease:'power3.out',
         scrollTrigger:{trigger:'.donate',start:'top 70%',toggleActions:'play none none reverse'}});
       gsap.from('.donate .big',{autoAlpha:0,scale:.9,duration:.7,ease:'back.out(1.6)',
@@ -476,6 +477,28 @@
         onUpdate:function(self){ draw(self.progress*(FN-1)); }});
       gsap.from('.seq-overlay',{autoAlpha:0,y:30,duration:.8,
         scrollTrigger:{trigger:'.seq', start:'top 55%', toggleActions:'play none none reverse'}});
+    })();
+
+    // prod scroll-scrub drone disassembly
+    (function(){
+      var cv=document.getElementById('prodc'); if(!cv) return;
+      var cx=cv.getContext('2d'), FN=121, frames=[], cur=0, ready=0;
+      function draw(i){ i=Math.max(0,Math.min(FN-1,Math.round(i))); var img=frames[i];
+        if(!cx||!img||!img.complete||!img.naturalWidth) return;
+        var cw=cv.width,ch=cv.height,iw=img.naturalWidth,ih=img.naturalHeight,
+            s=Math.max(cw/iw,ch/ih),w=iw*s,h=ih*s;
+        cx.clearRect(0,0,cw,ch); cx.drawImage(img,(cw-w)/2,(ch-h)/2,w,h); cur=i; }
+      function size(){ var dpr=Math.min(window.devicePixelRatio||1,2);
+        cv.width=Math.floor(cv.clientWidth*dpr); cv.height=Math.floor(cv.clientHeight*dpr); draw(cur); }
+      for(var i=1;i<=FN;i++){ (function(idx){ var im=new Image();
+        im.onload=function(){ ready++; if(idx===1){ size(); draw(0);} };
+        im.src='prodseq/f_'+('00'+idx).slice(-3)+'.webp'; frames[idx-1]=im; })(i); }
+      window.addEventListener('resize', size); size();
+      if(reduce){ var t=setInterval(function(){ if(ready>FN*0.5){ draw(Math.floor(FN*0.5)); clearInterval(t);} },120); return; }
+      ScrollTrigger.create({trigger:'.prod', start:'top top', end:'bottom bottom', scrub:true,
+        onUpdate:function(self){ draw(self.progress*(FN-1)); }});
+      gsap.from('.prod-overlay',{autoAlpha:0,y:30,duration:.8,
+        scrollTrigger:{trigger:'.prod', start:'top 55%', toggleActions:'play none none reverse'}});
     })();
   }
 
