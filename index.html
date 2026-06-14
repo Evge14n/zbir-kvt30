@@ -388,7 +388,7 @@
     addEventListener('scroll', onScroll, {passive:true}); onScroll();
 
     if(reduce){
-      var n=document.querySelector('[data-count]'); if(n) n.textContent='25 000';
+      var n=document.querySelector('[data-count]'); if(n) n.textContent='2 000';
       gsap.set(['.manifesto .quote','.show .info > *','.acard','.alloc .head > *','.donate h2','.donate .sub','.donate .big'],{clearProps:'all'});
       return;
     }
@@ -421,7 +421,7 @@
       scrollTrigger:{trigger:'.show .info',start:'top 78%'}});
 
     // goal count-up + bar
-    var GOAL=25000, RAISED=0, o={v:0};
+    var GOAL=2000, RAISED=1041.74, o={v:0};
     var numEl=document.querySelector('[data-count]'), barEl=document.querySelector('.goal .track i'),
         rEl=document.querySelector('[data-raised]'), pEl=document.querySelector('[data-pct]');
     function fmt(n){return Math.round(n).toLocaleString('uk-UA').replace(/,/g,' ').replace(/ /g,' ');}
@@ -429,7 +429,7 @@
       onUpdate:function(){ if(numEl) numEl.textContent=fmt(o.v); }});
     gsap.fromTo(barEl,{scaleX:0},{scaleX:(RAISED/GOAL)||0.004,ease:'none',
       scrollTrigger:{trigger:'.goal',start:'top 72%',end:'top 28%',scrub:.6}});
-    if(rEl) rEl.textContent=fmt(RAISED)+' ₴';
+    if(rEl) rEl.textContent=RAISED.toLocaleString('uk-UA',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₴';
     if(pEl) pEl.textContent=Math.round(RAISED/GOAL*100)+'%';
 
     // allocation
