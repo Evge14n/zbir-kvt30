@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>КВТ мультик — проба стилю</title>
+<style>
+  html,body{margin:0;background:#0b0f0c;overflow:hidden}
+  #stage{width:1280px;height:720px;position:relative}
+  svg{display:block;width:1280px;height:720px}
+</style>
+</head>
+<body>
+<div id="stage">
+<svg id="scene" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bfe3c7"/><stop offset=".55" stop-color="#e9f3d8"/><stop offset="1" stop-color="#f6efd6"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cbb5e"/><stop offset="1" stop-color="#6c9c46"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff7d6" stop-opacity=".9"/><stop offset="1" stop-color="#fff7d6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff7a1a"/><stop offset=".6" stop-color="#ffb02e"/><stop offset="1" stop-color="#ffe06a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="1010" cy="150" r="220" fill="url(#sun)"/>
+  <!-- distant trees -->
+  <g opacity=".55">
+    <ellipse cx="170" cy="300" rx="120" ry="150" fill="#7cae5e"/>
+    <ellipse cx="360" cy="280" rx="140" ry="170" fill="#6fa452"/>
+    <ellipse cx="980" cy="290" rx="150" ry="175" fill="#74a857"/>
+    <ellipse cx="1180" cy="300" rx="120" ry="150" fill="#6fa452"/>
+  </g>
+  <!-- near trees -->
+  <g>
+    <rect x="120" y="360" width="26" height="120" rx="8" fill="#7a5a36"/>
+    <ellipse cx="133" cy="330" rx="78" ry="92" fill="#5e9440"/>
+    <ellipse cx="133" cy="330" rx="78" ry="92" fill="#4f8537" opacity=".35"/>
+  </g>
+  <g>
+    <rect x="1140" y="350" width="28" height="130" rx="8" fill="#7a5a36"/>
+    <ellipse cx="1154" cy="320" rx="86" ry="100" fill="#5e9440"/>
+  </g>
+  <!-- tent -->
+  <g transform="translate(245,372)">
+    <path d="M0,128 L92,0 L184,128 Z" fill="#c9742e"/>
+    <path d="M92,0 L184,128 L150,128 L70,8 Z" fill="#b1631f"/>
+    <path d="M92,18 L150,128 L34,128 Z" fill="#2a2a2e"/>
+    <path d="M92,18 L122,128 L92,128 Z" fill="#1f1f22"/>
+  </g>
+  <!-- ground -->
+  <path d="M0,470 Q640,430 1280,470 L1280,720 L0,720 Z" fill="url(#grass)"/>
+  <ellipse cx="640" cy="690" rx="520" ry="40" fill="#5e8c3d" opacity=".5"/>
+
+  <!-- CAMPFIRE + POT -->
+  <g id="fireSet" transform="translate(890,560)">
+    <ellipse cx="0" cy="44" rx="120" ry="22" fill="#4f7536" opacity=".5"/>
+    <!-- stones -->
+    <ellipse cx="-78" cy="34" rx="22" ry="14" fill="#9b9486"/>
+    <ellipse cx="78" cy="34" rx="22" ry="14" fill="#8a8478"/>
+    <ellipse cx="0" cy="46" rx="24" ry="14" fill="#a59e90"/>
+    <!-- logs -->
+    <rect x="-56" y="18" width="112" height="16" rx="8" fill="#8a5a30" transform="rotate(-12 0 26)"/>
+    <rect x="-56" y="18" width="112" height="16" rx="8" fill="#7a4d28" transform="rotate(12 0 26)"/>
+    <!-- flames -->
+    <g id="flames">
+      <path class="fl" d="M0,30 C-26,4 -22,-26 -6,-46 C-10,-22 6,-18 8,-34 C20,-16 24,6 0,30 Z" fill="url(#flame)"/>
+      <path class="fl" d="M0,28 C-14,8 -12,-12 -2,-30 C-4,-12 8,-10 8,-22 C16,-8 14,12 0,28 Z" fill="#ffd23e"/>
+    </g>
+    <!-- pot -->
+    <g id="pot" transform="translate(0,-8)">
+      <path d="M-44,-10 a44,18 0 0 0 88,0 L40,36 a40,30 0 0 1 -80,0 Z" fill="#34343a"/>
+      <ellipse cx="0" cy="-10" rx="44" ry="16" fill="#26262b"/>
+      <ellipse cx="0" cy="-10" rx="34" ry="11" fill="#5a3a22"/>
+      <path d="M-50,-12 a50,12 0 0 0 100,0" fill="none" stroke="#1d1d21" stroke-width="6" stroke-linecap="round"/>
+    </g>
+    <!-- steam -->
+    <g id="steam" fill="#f3f3ec">
+      <ellipse class="st" cx="-14" cy="-40" rx="9" ry="13"/>
+      <ellipse class="st" cx="6" cy="-52" rx="11" ry="15"/>
+      <ellipse class="st" cx="20" cy="-38" rx="8" ry="12"/>
+    </g>
+  </g>
+
+  <!-- SPICE CLOUD (hidden) -->
+  <g id="poof" transform="translate(890,512)" opacity="0">
+    <g fill="#cfae6a">
+      <circle cx="-40" cy="0" r="34"/><circle cx="0" cy="-18" r="40"/><circle cx="42" cy="-2" r="34"/>
+      <circle cx="22" cy="20" r="30"/><circle cx="-22" cy="22" r="28"/>
+    </g>
+    <g fill="#b8923f" opacity=".5">
+      <circle cx="-10" cy="-6" r="22"/><circle cx="24" cy="6" r="16"/>
+    </g>
+  </g>
+
+  <!-- HERO -->
+  <g id="hero" transform="translate(820,470)">
+    <ellipse cx="0" cy="150" rx="62" ry="13" fill="#000" opacity=".15"/>
+    <!-- legs -->
+    <rect x="-26" y="78" width="20" height="56" rx="10" fill="#3f4a2c"/>
+    <rect x="6" y="78" width="20" height="56" rx="10" fill="#3f4a2c"/>
+    <rect x="-30" y="126" width="28" height="15" rx="7" fill="#2a2118"/>
+    <rect x="2" y="126" width="28" height="15" rx="7" fill="#2a2118"/>
+    <!-- left arm (behind body) -->
+    <g id="armL">
+      <rect x="-60" y="2" width="19" height="56" rx="9.5" fill="#52602f"/>
+      <circle id="handL" cx="-50" cy="60" r="11" fill="#f2c49b"/>
+    </g>
+    <!-- body -->
+    <rect x="-42" y="-6" width="84" height="90" rx="24" fill="#5c6b3e"/>
+    <rect x="-42" y="-6" width="84" height="90" rx="24" fill="#000" opacity=".05"/>
+    <rect x="-32" y="34" width="24" height="24" rx="6" fill="#525f37"/>
+    <rect x="8" y="34" width="24" height="24" rx="6" fill="#525f37"/>
+    <circle cx="0" cy="20" r="2.4" fill="#46522f"/><circle cx="0" cy="36" r="2.4" fill="#46522f"/>
+    <!-- хустка -->
+    <path d="M-25,-6 L25,-6 L0,48 Z" fill="#2fa36b"/>
+    <path d="M-25,-6 L25,-6 L0,18 Z" fill="#3e8fd6"/>
+    <circle cx="0" cy="-4" r="7" fill="#e7c75a"/>
+    <!-- head -->
+    <g id="head">
+      <circle id="face" cx="0" cy="-44" r="40" fill="#f2c49b"/>
+      <circle cx="-40" cy="-44" r="8" fill="#ecb98c"/><circle cx="40" cy="-44" r="8" fill="#ecb98c"/>
+      <path d="M-40,-52 Q-38,-90 0,-90 Q38,-90 40,-52 Q18,-72 0,-70 Q-18,-72 -40,-52 Z" fill="#6b4a2b"/>
+      <ellipse cx="-22" cy="-30" r="6" rx="7" ry="6" fill="#f2a98a" opacity=".55"/>
+      <ellipse cx="22" cy="-30" r="6" rx="7" ry="6" fill="#f2a98a" opacity=".55"/>
+      <rect x="-23" y="-58" width="14" height="4" rx="2" fill="#6b4a2b"/>
+      <rect x="9" y="-58" width="14" height="4" rx="2" fill="#6b4a2b"/>
+      <circle id="eyeL" cx="-15" cy="-45" r="5" fill="#34281d"/>
+      <circle id="eyeR" cx="15" cy="-45" r="5" fill="#34281d"/>
+      <path id="mouth" d="M-12,-26 Q0,-16 12,-26" stroke="#874f3c" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
+    <!-- ear steam (hidden) -->
+    <g id="earSteam" opacity="0" fill="#f3f3ec">
+      <ellipse cx="-46" cy="-66" rx="7" ry="10"/><ellipse cx="-50" cy="-84" rx="6" ry="9"/>
+      <ellipse cx="46" cy="-66" rx="7" ry="10"/><ellipse cx="50" cy="-84" rx="6" ry="9"/>
+    </g>
+    <!-- right arm (front, holds spoon/jar) -->
+    <g id="armR">
+      <rect x="40" y="2" width="19" height="56" rx="9.5" fill="#586639"/>
+      <circle id="handR" cx="50" cy="60" r="11" fill="#f2c49b"/>
+      <!-- spoon -->
+      <g id="spoon"><rect x="47" y="56" width="6" height="46" rx="3" fill="#a9743e"/><ellipse cx="50" cy="102" rx="11" ry="8" fill="#c89456"/></g>
+      <!-- jar (hidden) -->
+      <g id="jar" opacity="0" transform="translate(50,40)">
+        <rect x="-16" y="-30" width="32" height="40" rx="6" fill="#d8e3ef"/>
+        <rect x="-16" y="-30" width="32" height="14" rx="6" fill="#c0392b"/>
+        <rect x="-12" y="-38" width="24" height="10" rx="3" fill="#8d2b20"/>
+        <rect x="-11" y="-12" width="22" height="18" rx="3" fill="#e07b39"/>
+        <circle cx="-5" cy="-36" r="1.6" fill="#5a1b14"/><circle cx="0" cy="-36" r="1.6" fill="#5a1b14"/><circle cx="5" cy="-36" r="1.6" fill="#5a1b14"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- spice particles (hidden) -->
+  <g id="spice" opacity="0" fill="#c0392b"></g>
+
+  <!-- title -->
+  <g id="title" opacity="0" transform="translate(640,120)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial Black, Arial" font-weight="900" font-size="58" fill="#2c2a22">ОДИН ДЕНЬ НА КВТ</text>
+    <text x="0" y="40" text-anchor="middle" font-family="Arial" font-weight="700" font-size="22" letter-spacing="4" fill="#c0392b">ПЛАСТ · КВТ 30 · ІІІ ПРОБА</text>
+  </g>
+</svg>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+  // spice particles
+  var sp=document.getElementById('spice'), parts=[];
+  for(var i=0;i<26;i++){ var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    var x=850+Math.random()*80, y=470+Math.random()*20, r=2+Math.random()*3;
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',r);
+    c.setAttribute('fill', Math.random()<.5?'#c0392b':'#e07b39'); sp.appendChild(c); parts.push({el:c,x:x,y:y}); }
+
+  // ambient loops
+  gsap.to('.fl',{scaleY:1.18,scaleX:.9,transformOrigin:'50% 100%',duration:.32,yoyo:true,repeat:-1,ease:'sine.inOut',stagger:.08});
+  gsap.to('#steam .st',{y:-34,opacity:0,duration:1.8,repeat:-1,ease:'sine.out',stagger:.5,transformOrigin:'50% 50%'});
+  gsap.set('#steam .st',{opacity:.0});
+  gsap.to('#steam .st',{opacity:.7,duration:.4,repeat:-1,yoyo:true,stagger:.5});
+
+  // master timeline
+  var tl=gsap.timeline({paused:true});
+  window.tl=tl;
+
+  // intro
+  tl.from('#scene',{opacity:0,duration:.6},0);
+  tl.to('#title',{opacity:1,y:96,duration:.6,ease:'power2.out'},0.3)
+    .to('#title',{opacity:0,y:60,duration:.5},2.4);
+  // idle bob
+  tl.to('#hero',{y:'-=6',duration:.7,yoyo:true,repeat:3,ease:'sine.inOut'},0.6);
+
+  // STIR (2.6 → 5.2)
+  tl.to('#spoon',{x:6,duration:.42,yoyo:true,repeat:6,ease:'sine.inOut'},2.6)
+    .to('#head',{x:-3,duration:.5,yoyo:true,repeat:2,ease:'sine.inOut'},3.0);
+
+  // TASTE (5.4 → 7.2) — lift spoon, happy
+  tl.to('#head',{x:5,y:-4,duration:.4,ease:'power2.out'},5.4)
+    .to('#mouth',{attr:{d:'M-14,-24 Q0,-8 14,-24'},duration:.3},5.7)
+    .to(['#eyeL','#eyeR'],{scaleY:.3,transformOrigin:'50% 50%',duration:.25,yoyo:true,repeat:1},5.7)
+    .to('#head',{x:0,y:0,duration:.4},6.6)
+    .to('#mouth',{attr:{d:'M-12,-26 Q0,-16 12,-26'},duration:.3},6.6);
+
+  // GRAB SPICE (7.4 → 8.6)
+  tl.to('#spoon',{opacity:0,duration:.2},7.3)
+    .to('#jar',{opacity:1,duration:.2},7.4)
+    .to('#jar',{y:-34,duration:.5,ease:'power2.out'},7.5)
+    .to('#mouth',{attr:{d:'M-12,-26 Q0,-20 12,-26'},duration:.2},7.5);
+  tl.to('#jar',{x:7,duration:.1,yoyo:true,repeat:9,ease:'sine.inOut'},8.0)
+    .to('#head',{x:-3,duration:.1,yoyo:true,repeat:9,ease:'sine.inOut'},8.0);
+
+  // POP + POUR (9.0)
+  tl.to('#jar',{opacity:0,duration:.15},9.0);
+  tl.set('#spice',{opacity:1},9.0);
+  tl.fromTo(parts.map(function(p){return p.el;}),
+    {y:0,opacity:1},
+    {y:function(i){return 30+Math.random()*40;},opacity:0,duration:.7,ease:'power1.in',stagger:.01},9.0);
+
+  // POOF cloud (9.2 → 10.8)
+  tl.fromTo('#poof',{opacity:0,scale:.2,transformOrigin:'50% 60%'},{opacity:1,scale:1.25,duration:.5,ease:'back.out(1.4)'},9.2)
+    .to('#poof',{scale:1.5,opacity:0,duration:1.0,ease:'power1.out'},9.9);
+
+  // RED FACE + EAR STEAM (10.0 → 13)
+  tl.to('#face',{fill:'#e8665a',duration:.4},10.0)
+    .to(['#eyeL','#eyeR'],{scale:1.5,transformOrigin:'50% 50%',duration:.2},10.1)
+    .to('#mouth',{attr:{d:'M-14,-20 Q0,-34 14,-20'},duration:.2},10.1)
+    .to('#earSteam',{opacity:1,duration:.2},10.3)
+    .to('#earSteam',{y:-14,opacity:0,duration:1.0,repeat:1,ease:'power1.out'},10.4)
+    .to('#hero',{x:'+=6',duration:.06,yoyo:true,repeat:14,ease:'none'},10.3)
+    .to('#face',{fill:'#f2c49b',duration:.6},12.4)
+    .to(['#eyeL','#eyeR'],{scale:1,duration:.3},12.4)
+    .to('#mouth',{attr:{d:'M-12,-24 Q0,-16 12,-24'},duration:.3},12.6);
+
+  // hold
+  tl.to({},{duration:1.2},13.0);
+
+  tl.play();
+})();
+</script>
+</body>
+</html>
